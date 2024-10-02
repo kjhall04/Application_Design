@@ -1,0 +1,24 @@
+Study for test 2
+
+Exception handling
+    main purpose of exception handiling
+    what type of error occurs when?
+    what block contains code to raise the error
+
+    know try, except, else, finally, raise
+
+modularity
+    using inmport statements
+    know super function (call the parent class methods)
+
+reusability
+
+
+databses with sql
+    import sqlite3
+    connect to a database - sqlite3.connect()
+    create table
+
+look over 
+    code snipet for creating a database and table
+    delete statements and syntax
