@@ -162,3 +162,19 @@ import modules
 
 9/23
 reporting
+
+10/16
+importance of planning
+    key components of a software project plan
+    project timelines - deadlines and milestones
+    identifying team roles and responsibilities
+    budget considerations
+    risk management - what risks are invovled if things dont go as planned
+
+testing plans
+    whne changes are made, the plans can be followed to make sure the program still works properly
+
+deployment
+
+modular
+    seperating code into different modules to import later
