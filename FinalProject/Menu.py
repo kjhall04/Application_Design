@@ -1,4 +1,7 @@
 import customtkinter as ctk
+from tkinter import messagebox
 
-if __name__ == '__main__':
-    pass
+ctk.set_appearance_mode('dark')
+ctk.set_default_color_theme('green')
+
+class 

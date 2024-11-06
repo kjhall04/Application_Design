@@ -1,8 +1,8 @@
 #! pyhton3
 # Main code to run the Equipment Logging Program
 
-import TestDatabase
+import Create_Database
 
 if __name__ == '__main__':
     
-    TestDatabase.create_database()
+    Create_Database.create_database()
