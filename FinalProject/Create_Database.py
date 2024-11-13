@@ -2,7 +2,7 @@ import sqlite3
 
 def create_database():
     # connect to sqlite database if on doesn't exist
-    conn = sqlite3.connect('EquipmetLogs.db')
+    conn = sqlite3.connect('EquipmentLogs.db')
 
     # create cursor object
     cursor = conn.cursor()
@@ -21,7 +21,7 @@ def create_database():
         id INTEGER NOT NULL,
         Ename TEXT NOT NULL,
         DateInstalled TEXT NOT NULL,
-        Decomissioned BOOLEAN NOT NULL,
+        Decomissioned TEXT NOT NULL,
         DecomissionedDate TEXT NOT NULL,
         EquipmentAge TEXT NOT NULL,
         MaintenanceDate TEXT NOT NULL,
@@ -30,6 +30,8 @@ def create_database():
     
     CREATE TABLE IF NOT EXISTS login_data (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        Fname TEXT NOT NULL,
+        Lname TEXT NOT NULL,
         Username TEXT NOT NULL,
         Password TEXT NOT NULL
     );
@@ -45,3 +47,6 @@ def create_database():
     conn.close()
 
     print('Equipment database created successfully.')
+
+if __name__ == '__main__':
+    create_database()
