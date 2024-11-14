@@ -37,8 +37,8 @@ class FrameManager(customtkinter.CTk):
         self.show_frame('Menu')
 
 class LoginFrame(customtkinter.CTkFrame):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, master):
+        super().__init__(master)
  
         self.container = customtkinter.CTkFrame(self)
         self.container.pack(expand=True)
@@ -52,28 +52,35 @@ class LoginFrame(customtkinter.CTkFrame):
         self.password_entry = customtkinter.CTkEntry(self.container, placeholder_text='Password', show='*')
         self.password_entry.pack(pady=5)
 
-        self.login_button = customtkinter.CTkButton(self.container, text='Login')
+        self.login_button = customtkinter.CTkButton(self.container, text='Login', command=self.validate_entry)
         self.login_button.pack(pady=(5, 10))
 
         self.error_label = customtkinter.CTkLabel(self.container, text="", text_color="red")
-        self.error_label.pack(padx=10, pady=5)
+        self.error_label.pack(padx=10)
 
-        self.sign_up_button = customtkinter.CTkButton(self.container, text='Sign Up', command=lambda: parent.show_frame('Sign Up'))
-        self.sign_up_button.pack(pady=10)
+        self.sign_up_button = customtkinter.CTkButton(self.container, text='Sign Up', command=lambda: self.master.show_frame('Sign Up'))
+        self.sign_up_button.pack(pady=5)
 
     def validate_entry(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
 
-        LoginData = DatabaseFunctions.get_login_data
+        # Retrieve login data from the database
+        login_data = DatabaseFunctions.get_login_data()
 
-        
-                
+        # Check if the username and password match any entry in the login data
+        for db_username, db_password in login_data:
+            if username == db_username and password == db_password:
+                self.error_label.configure(text="Login successful!", text_color="green")
+                self.master.login_succesful()  # Show the Menu frame
+                return
 
+        # If no match is found, display an error message
+        self.error_label.configure(text="Invalid username or password", text_color="red")
 
 class SignUpFrame(customtkinter.CTkFrame):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, master):
+        super().__init__(master)
 
         self.container = customtkinter.CTkFrame(self)
         self.container.pack(expand=True)
@@ -99,7 +106,7 @@ class SignUpFrame(customtkinter.CTkFrame):
         self.error_label = customtkinter.CTkLabel(self.container, text="", text_color="red")
         self.error_label.pack(padx=10, pady=5)
 
-        self.login_button = customtkinter.CTkButton(self.container, text='Go Back', command=lambda: parent.show_frame('Login'))
+        self.login_button = customtkinter.CTkButton(self.container, text='Go Back', command=lambda: self.master.show_frame('Login'))
         self.login_button.pack(pady=5)
 
     def validate_info(self):
@@ -116,8 +123,9 @@ class SignUpFrame(customtkinter.CTkFrame):
             ("Password", Validation.other_fields(password)),
         ]
 
-        if validation_results == [] or len(validation_results) < 4:
+        if not fname or not lname or not username or not password:
             self.error_label.configure(text='Enter info into all the boxes.')
+            return
 
         # Check for any validation errors
         for field, result in validation_results:
@@ -131,11 +139,11 @@ class SignUpFrame(customtkinter.CTkFrame):
         DatabaseFunctions.add_login_entry(fname, lname, username, password)
 
         self.error_label.configure(text="Sign-up successful!", text_color="green")
-        self.parent.show_frame('Login')
+        self.master.show_frame('Login')
 
 class MenuFrame(customtkinter.CTkFrame):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, master):
+        super().__init__(master)
  
         self.container = customtkinter.CTkFrame(self)
         self.container.pack(expand=True)
