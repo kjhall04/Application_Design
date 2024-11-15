@@ -26,11 +26,37 @@ def get_login_data():
     data = []
 
     for row in rows:
-        username, password = row
         data.append(row)
 
     conn.close()
     return data
 
+def add_user(fname, lname, phone_number, email):
+    conn = sqlite3.connect('EquipmentLogs.db')
+    cursor = conn.cursor()
+
+    insert_query = '''
+    INSERT INTO contact (Fname, Lname, PhoneNumber, Email)
+    VALUES (?, ?, ?, ?);
+    '''
+
+    cursor.execute(insert_query, (fname, lname, phone_number, email))
+    conn.commit()
+    conn.close()
+
+def add_equipment(ename, date_installed, decommissioned, decommisioned_date, equipment_age, maintenance_date, department):
+    conn = sqlite3.connect('EquipmentLogs.db')
+    cursor = conn.cursor()
+
+    insert_query = '''
+    INSERT INTO contact (Ename, DateInstalled, Decomissioned, DecomissionedDate, 
+    EquipmentAge, MaintenanceDate, Department)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
+    '''
+
+    cursor.execute(insert_query, (ename, date_installed, decommissioned, decommisioned_date, equipment_age, maintenance_date, department))
+    conn.commit()
+    conn.close()
+
 if __name__ == '__main__':
-    get_login_data()
+    print(get_login_data())
