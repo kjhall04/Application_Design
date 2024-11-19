@@ -53,6 +53,15 @@ def other_fields(entry: str):
             return f"'{entry}' is invalid. Only letters, spaces, and numbers are allowed."
     return True
 
+def decomissioned_date(entry: str):
+    # Decomissioned_date can be a date or N/A
+    # Validates if it is one or the other
+    if date(entry) is True:
+        return True
+    elif entry == 'N/A':
+        return True
+    else:
+        return f"'{entry}' is invalid. Please use a date or 'N/A'"
     
 # Main is to make sure the functions above work properly
 if __name__ == '__main__':
@@ -65,4 +74,5 @@ if __name__ == '__main__':
     # print(boolean('sdfas'))
     # print(email('kalebhall678678'))
     # print(other_fields('el capitan4565'))
+    # print(decomissioned_date('adsfasd'))
     pass

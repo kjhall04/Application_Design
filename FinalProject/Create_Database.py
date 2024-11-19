@@ -16,18 +16,20 @@ def create_database():
         PhoneNumber TEXT NOT NULL,
         Email TEXT NOT NULL
     );
-    
+
     CREATE TABLE IF NOT EXISTS equipment (
-        id INTEGER NOT NULL,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        contact_id INTEGER NOT NULL,
         Ename TEXT NOT NULL,
         DateInstalled TEXT NOT NULL,
         Decomissioned TEXT NOT NULL,
         DecomissionedDate TEXT NOT NULL,
         EquipmentAge TEXT NOT NULL,
         MaintenanceDate TEXT NOT NULL,
-        Department TEXT NOT NULL
+        Department TEXT NOT NULL,
+        FOREIGN KEY (contact_id) REFERENCES contact(id)
     );
-    
+
     CREATE TABLE IF NOT EXISTS login_data (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         Fname TEXT NOT NULL,

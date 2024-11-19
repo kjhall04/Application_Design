@@ -13,8 +13,8 @@ class FrameManager(customtkinter.CTk):
 
         # Create widow and place it in the center (or close to) of the user screen
         self.title('Equipment Manager')
-        self.geometry('600x400')
-        self.eval('tk::PlaceWindow . center')
+        self.geometry('1100x580')
+        # self.eval('tk::PlaceWindow . center')
 
         # Configuration to center the frames inside of the window space
         self.grid_columnconfigure(0, weight=1)
@@ -26,8 +26,9 @@ class FrameManager(customtkinter.CTk):
         # Adds all the frames 
         self.add_frame(LoginFrame, 'Login')
         self.add_frame(SignUpFrame, 'Sign Up')
-        self.add_frame(MenuFrame, 'Menu')
         self.add_frame(LoadingFrame, 'Loading')
+        #self.add_frame(DatabaseFrame, 'Database')
+        
 
         # Function for knowing the boolean value to enter the debug mode or not
         # Debug menu is only accessable from running the menu module outside of the main module
@@ -48,14 +49,12 @@ class FrameManager(customtkinter.CTk):
 
     # Add frames to the dictionary to call later
     def add_frame(self, page_class, name):
-        frame = page_class(self)
-        self.frames[name] = frame
-        frame.grid(row=0, column=0, sticky='nsew')
+        self.frames[name] = page_class(self)
+        self.frames[name].grid(row=0, column=0, sticky='nsew')
 
     # Showing a frame from the dictionary
     def show_frame(self, name):
-        frame = self.frames[name]
-        frame.tkraise()
+        self.frames[name].tkraise()
 
     # If process is succesful then show the loading frame
     def login_succesful(self):
@@ -188,10 +187,15 @@ class SignUpFrame(customtkinter.CTkFrame):
 
         # If all validations pass, proceed to add data to the database
         self.error_label.configure(text='')  # Clear error label
-        DatabaseFunctions.add_login_entry(fname, lname, username, password)
 
-        # Show the login frame
-        self.master.show_frame('Login')
+        action = DatabaseFunctions.add_login(fname, lname, username, password) 
+
+        if action != True:
+            self.error_label.configure(text=action)
+        else:
+            # Show the login frame
+            self.master.show_frame('Login')
+        
 
 # Frame for the loading animation
 class LoadingFrame(customtkinter.CTkFrame):
@@ -217,29 +221,17 @@ class LoadingFrame(customtkinter.CTkFrame):
             self.progress.set(progress)
             self.after(50, lambda:self.update_progress(progress))
         else:
-            self.master.show_frame('Menu')
+            # self.master.show_frame('Menu')
+            pass
 
-class MenuFrame(customtkinter.CTkFrame):
+class DatabaseFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
- 
+
         self.container = customtkinter.CTkFrame(self)
         self.container.pack(expand=True)
 
-        self.label = customtkinter.CTkLabel(self.container, text='Menu', font=('Arial', 25))
-        self.label.pack(padx=50, pady=10)
 
-        self.add_record = customtkinter.CTkButton(self.container, text='Add Record')
-        self.add_record.pack(pady=5)
-
-        self.add_record = customtkinter.CTkButton(self.container, text='Delete Record')
-        self.add_record.pack(pady=5)
-
-        self.add_record = customtkinter.CTkButton(self.container, text='Create Report')
-        self.add_record.pack(pady=5)
-
-        self.add_record = customtkinter.CTkButton(self.container, text='Exit Program', command=self.quit)
-        self.add_record.pack(pady=5)
 
 if __name__ == '__main__':
     # Run the program in the debug mode
