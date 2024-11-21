@@ -26,7 +26,7 @@ def age(entry: str):
 def name(entry:str):
     # Validates names by ensuring their are only letters and spaces
     for char in entry:
-        if not char.isalpha() and not char.isspace():
+        if not char.lower().isalpha() and not char.isspace():
             return f"'{entry}' is invalid. Only letters and spaces are allowed."
     return True
 
@@ -49,7 +49,7 @@ def boolean(entry: str):
 def other_fields(entry: str):
     # Validates all other fields, allowing alphabetic characters, spaces, and digits.
     for char in entry:
-        if not char.isalpha() and not char.isspace() and not char.isdigit():
+        if not char.lower().isalpha() and not char.isspace() and not char.isdigit():
             return f"'{entry}' is invalid. Only letters, spaces, and numbers are allowed."
     return True
 

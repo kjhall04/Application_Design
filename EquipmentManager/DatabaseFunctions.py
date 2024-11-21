@@ -3,7 +3,7 @@ import sqlite3
 # Retrieve all login data
 def get_login_data() -> list:
     # Connect to database
-    conn = sqlite3.connect('EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -25,7 +25,7 @@ def get_login_data() -> list:
 # Retrieve contact data
 def get_contact_data() -> list:
     # Connect to database
-    conn = sqlite3.connect('EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -47,7 +47,7 @@ def get_contact_data() -> list:
 # Retrieve equipment data
 def get_equipment_data() -> list:
     # Connect to database
-    conn = sqlite3.connect('EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -68,9 +68,9 @@ def get_equipment_data() -> list:
     return data
 
 # Add login data to database
-def add_login(fname, lname, username, password):
+def add_login(fname, lname, username, password) -> str | None:
     # Connect to database
-    conn = sqlite3.connect('EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -82,7 +82,7 @@ def add_login(fname, lname, username, password):
     data = fname, lname, username, password
 
     if validate_database_entry('login_data', data):
-        return 'This data is already in use.'
+        return 'This user data is already in use.'
     else:
         cursor.execute(insert_query, data)
         conn.commit()
@@ -90,9 +90,9 @@ def add_login(fname, lname, username, password):
     conn.close()
 
 # Add contact data to database
-def add_contact(fname, lname, phone_number, email):
+def add_contact(fname, lname, phone_number, email) -> str | None:
     # Connect to database
-    conn = sqlite3.connect('EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -113,9 +113,9 @@ def add_contact(fname, lname, phone_number, email):
 
 # Add equipment data to database
 def add_equipment(fname, lname, ename, date_installed, decomissioned, decomisioned_date, 
-                  equipment_age, maintenance_date, department):
+                  equipment_age, maintenance_date, department) -> str | None:
     # Connect to database
-    conn = sqlite3.connect('EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -141,7 +141,7 @@ def add_equipment(fname, lname, ename, date_installed, decomissioned, decomision
 # Retireve the contact id for the equipment table
 def get_contact_id(fname, lname) -> int:
     # Connect to database
-    conn = sqlite3.connect('EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -156,9 +156,9 @@ def get_contact_id(fname, lname) -> int:
     # return the first value from the fetchone tuple (this is the id for the proper contact)
     return contact_id[0]
 
-def validate_database_entry(table_name, data):
+def validate_database_entry(table_name, data) -> bool:
     # Connect to database
-    conn = sqlite3.connect('EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -186,15 +186,55 @@ def validate_database_entry(table_name, data):
         return False
     return True  # If the result is not None, the data already exists
 
+def get_all_data_for_menu() -> dict:
+    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    cursor = conn.cursor()
+
+    query = '''
+    SELECT
+        contact.Fname,
+        contact.Lname,
+        equipment.Ename,
+        equipment.Department
+    FROM
+        contact
+    INNER JOIN
+        equipment
+    ON
+        contact.id = equipment.contact_id
+    ORDER BY
+        contact.Fname, contact.Lname;
+    '''
+    cursor.execute(query)
+
+    results = cursor.fetchall()
+
+    data_list = []
+    for row in results:
+        # Append each record as a dictionary
+        data_list.append({
+            "Fname": row[0],
+            "Lname": row[1],
+            "Ename": row[2],
+            "Department": row[3],
+        })
+
+    conn.close()
+
+    return data_list
+
 
 
 # Test functionality here
 if __name__ == '__main__':
 
     # add_contact('John', 'Estes', '632-456-7892', 'jestes@gmail.com')
-    # print(add_equipment('John', 'Estes', 'Iphone 14', '10/04/2024', 'False', 'N/A', '1 month', '01/01/2025', 'I.T.'))
+    # print(add_equipment('Henry', 'Jones', 'Monitor', '10/04/2024', 'False', 'N/A', '1 month', '01/01/2025', 'I.T.'))
 
     # print(get_login_data())
     # print(get_contact_data())
     # print(get_equipment_data())
+    
+    print(get_all_data_for_menu())
+
     pass

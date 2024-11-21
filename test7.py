@@ -118,7 +118,7 @@ class App(customtkinter.CTk):
 
         # create scrollable label and button frame
         try:
-            self.image = customtkinter.CTkImage(Image.open(r"C:\Users\LichKing\Pictures\lichking.jpg"))
+            self.image = customtkinter.CTkImage(Image.open("C:\\Users\\LichKing\\Desktop\\Fall 2024\\Application Design\\Application_Design\\EquipmentManager\\Wallpaper.jpg"))
         except Exception as e:
             print(f"Error loading image: {e}")
             self.image = None
