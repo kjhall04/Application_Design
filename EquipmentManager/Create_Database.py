@@ -2,7 +2,7 @@ import sqlite3
 
 def create_database():
     # connect to sqlite database if on doesn't exist
-    conn = sqlite3.connect('EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
 
     # create cursor object
     cursor = conn.cursor()

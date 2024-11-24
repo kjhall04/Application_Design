@@ -1,6 +1,6 @@
 import customtkinter as ctk
-from PIL import Image
-import os
+# from PIL import Image
+# import os
 import DatabaseFunctions
 import ValidateEntry
 
@@ -10,16 +10,10 @@ ctk.set_default_color_theme('dark-blue')
 
 # Class for managing all the frames
 class FrameManager(ctk.CTk):
-    def __init__(self, debug_mode = False):
+    def __init__(self, debug_mode=False):
         super().__init__()
-
-        # Create widow and place it in the center (or close to) of the user screen
         self.title('Equipment Manager')
         self.geometry('1000x580')
-        self.resizable(False, False)
-
-        self.background_frame = BackgroundFrame(self)
-        self.background_frame.grid(row=0, column=0, sticky='nsew')
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -27,61 +21,35 @@ class FrameManager(ctk.CTk):
         # Create a list of the frames and their names
         self.frames = {}
 
-        # Adds all the frames 
+        # Add all the frames
         self.add_frame(LoginFrame, 'Login')
         self.add_frame(SignUpFrame, 'Sign Up')
         self.add_frame(LoadingFrame, 'Loading')
         self.add_frame(DatabaseFrame, 'Database')
 
-        # Function for knowing the boolean value to enter the debug mode or not
-        # Debug menu is only accessable from running the menu module outside of the main module
+        # Debug mode
         self.debug_mode = debug_mode
-
-        # If debug_mode is True then create a drop down menu to pick from the different frames
         if self.debug_mode:
             self.frame_selector = ctk.CTkOptionMenu(
-                self, 
-                values=list(self.frames.keys()), 
-                command=self.show_frame
+                self,
+                values=list(self.frames.keys()),
+                command=self.show_frame,
             )
-            # Place the selector to the side outside of the frames
             self.frame_selector.grid(row=0, column=1, padx=10, pady=10, sticky='e')
 
-        # Show the first Login Frame
+        # Show the first frame
         self.show_frame('Login')
 
-    # Add frames to the dictionary to call later
     def add_frame(self, page_class, name):
         self.frames[name] = page_class(self)
         self.frames[name].grid(row=0, column=0, sticky='nsew')
 
-    # Showing a frame from the dictionary
     def show_frame(self, name):
         self.frames[name].tkraise()
 
-    # If process is succesful then show the loading frame
     def login_succesful(self):
         self.show_frame('Loading')
         self.frames['Loading'].animate_loading()
-
-class BackgroundFrame(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
-
-        # Get the image and place it on this frame
-        current_path = os.path.dirname(os.path.realpath(__file__))
-        image_path = os.path.join(current_path, "background.jpg")
-        print(image_path)
-        bg_image = ctk.CTkImage(Image.open(image_path), size=(1000, 580))
-
-        # Add the background label
-        bg_image_label = ctk.CTkLabel(self, image=bg_image, text='')  # Set text='' to suppress any text
-        bg_image_label.image = bg_image  # Keep a reference to avoid garbage collection
-        bg_image_label.grid(row=0, column=0, sticky='nsew')
-
-        # Expand the frame to fill the root window
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
 
 # Class for  the login Frame
 class LoginFrame(ctk.CTkFrame):
@@ -131,7 +99,6 @@ class LoginFrame(ctk.CTkFrame):
             if username == db_username and password == db_password:
                 # If succesful run the login succesful function from the master class
                 self.master.login_succesful()
-                return
 
         # If no match is found, display an error message
         self.error_label.configure(text='Invalid username or password', text_color='red')
@@ -192,7 +159,7 @@ class SignUpFrame(ctk.CTkFrame):
             ('First name', ValidateEntry.name(fname)),
             ('Last name', ValidateEntry.name(lname)),
             ('Username', ValidateEntry.other_fields(username)),
-            ('Password', ValidateEntry.other_fields(password)),
+            ('Password', ValidateEntry.password(password)),
         ]
 
         # If any entry is empty then display the appropriate error
@@ -264,6 +231,12 @@ class DatabaseFrame(ctk.CTkFrame):
 
         self.database.grid_columnconfigure(0, weight=1)
 
+        self.create_report_button = ctk.CTkButton(self.container, text='Create Report')
+        self.create_report_button.grid(row=2, column=0, padx=15, pady=5)
+
+        self.exit_button = ctk.CTkButton(self.container, text='Exit Program', command=self.master.quit)
+        self.exit_button.grid(row=3, column=0, padx=15, pady=(5, 10))
+
         self.row_counter = 0
 
         data_list = DatabaseFunctions.get_all_data_for_menu()
@@ -285,17 +258,48 @@ class DatabaseFrame(ctk.CTkFrame):
             name_label.grid(row=self.row_counter, column=0, padx=10, pady=5, sticky= 'w')
             self.row_counter += 1
 
+            name_label._label.configure(cursor='hand2')
+
+            name_label.bind('<Enter>', lambda e, label=name_label: self.on_hover(e, label))
+            name_label.bind('<Leave>', lambda e, label=name_label: self.on_leave(e, label))  # When cursor leaves
+            name_label.bind('<Button-1>', lambda e, name=name: self.on_name_click(e, name))
+
             for equipment in equipment_list:
-                self.equipment_label = ctk.CTkLabel(
+                equipment_label = ctk.CTkLabel(
                     self.database,
                     text=f"{equipment['Ename']} ({equipment['Department']})",
                     font=('Arial', 14),
                     anchor='w'
                 )
-                self.equipment_label.grid(row=self.row_counter-1, column=1, padx=10, pady=5, sticky= 'w')
+                equipment_label.grid(row=self.row_counter-1, column=1, padx=10, pady=5, sticky= 'w')
                 self.row_counter += 1
+
+                equipment_label._label.configure(cursor='hand2')
+
+                equipment_label.bind('<Enter>', lambda e, label=equipment_label: self.on_hover(e, label))
+                equipment_label.bind('<Leave>', lambda e, label=equipment_label: self.on_leave(e, label))  # When cursor leaves
+                equipment_label.bind('<Button-1>', lambda e, eq=equipment: self.on_eq_click(e, eq))
+
+    def on_hover(self, event, label):
+        label.configure(text_color='gray')
+
+    def on_leave(self, event, label):
+        label.configure(text_color='white')
+
+    def on_name_click(self, event, name):
+        print(f"Clicked on name: {name}")
+
+    def on_eq_click(self, event, equipment):
+        print(f"Clicked on equipment: {equipment['Ename']} in {equipment['Department']}")
+
+class ViewData(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        pass
+
 
 if __name__ == '__main__':
     # Run the program in the debug mode
-    app = FrameManager(debug_mode=True)    
+    app = FrameManager(debug_mode=True)
     app.mainloop()

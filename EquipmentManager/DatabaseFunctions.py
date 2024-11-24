@@ -3,7 +3,7 @@ import sqlite3
 # Retrieve all login data
 def get_login_data() -> list:
     # Connect to database
-    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -25,7 +25,7 @@ def get_login_data() -> list:
 # Retrieve contact data
 def get_contact_data() -> list:
     # Connect to database
-    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -47,7 +47,7 @@ def get_contact_data() -> list:
 # Retrieve equipment data
 def get_equipment_data() -> list:
     # Connect to database
-    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -68,9 +68,9 @@ def get_equipment_data() -> list:
     return data
 
 # Add login data to database
-def add_login(fname, lname, username, password) -> str | None:
+def add_login(fname:str, lname:str, username:str, password:str) -> str | None:
     # Connect to database
-    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -90,9 +90,9 @@ def add_login(fname, lname, username, password) -> str | None:
     conn.close()
 
 # Add contact data to database
-def add_contact(fname, lname, phone_number, email) -> str | None:
+def add_contact(fname:str, lname:str, phone_number:str, email:str) -> str | None:
     # Connect to database
-    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -112,10 +112,10 @@ def add_contact(fname, lname, phone_number, email) -> str | None:
     conn.close()
 
 # Add equipment data to database
-def add_equipment(fname, lname, ename, date_installed, decomissioned, decomisioned_date, 
-                  equipment_age, maintenance_date, department) -> str | None:
+def add_equipment(fname:str, lname:str, ename:str, date_installed:str, decomissioned:str, decomisioned_date:str, 
+                  equipment_age:str, maintenance_date:str, department:str) -> str | None:
     # Connect to database
-    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -139,9 +139,9 @@ def add_equipment(fname, lname, ename, date_installed, decomissioned, decomision
     conn.close()
 
 # Retireve the contact id for the equipment table
-def get_contact_id(fname, lname) -> int:
+def get_contact_id(fname:str, lname:str) -> int:
     # Connect to database
-    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -156,9 +156,9 @@ def get_contact_id(fname, lname) -> int:
     # return the first value from the fetchone tuple (this is the id for the proper contact)
     return contact_id[0]
 
-def validate_database_entry(table_name, data) -> bool:
+def validate_database_entry(table_name:str, data:list) -> bool:
     # Connect to database
-    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
@@ -187,7 +187,7 @@ def validate_database_entry(table_name, data) -> bool:
     return True  # If the result is not None, the data already exists
 
 def get_all_data_for_menu() -> dict:
-    conn = sqlite3.connect('EquipmentManager\EquipmentLogs.db')
+    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     cursor = conn.cursor()
 
     query = '''
@@ -235,6 +235,6 @@ if __name__ == '__main__':
     # print(get_contact_data())
     # print(get_equipment_data())
     
-    print(get_all_data_for_menu())
+    # print(get_all_data_for_menu())
 
     pass
