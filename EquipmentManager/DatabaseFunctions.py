@@ -224,7 +224,6 @@ def get_all_data_for_menu() -> dict:
     return data_list
 
 
-
 # Test functionality here
 if __name__ == '__main__':
 

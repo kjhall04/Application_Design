@@ -1,6 +1,4 @@
 import customtkinter as ctk
-# from PIL import Image
-# import os
 import DatabaseFunctions
 import ValidateEntry
 
@@ -26,6 +24,10 @@ class FrameManager(ctk.CTk):
         self.add_frame(SignUpFrame, 'Sign Up')
         self.add_frame(LoadingFrame, 'Loading')
         self.add_frame(DatabaseFrame, 'Database')
+        self.add_frame(ViewContactData, 'CData')
+        self.add_frame(ViewEquipmentData, 'EData')
+        self.add_frame(AddContact, 'AddC')
+        self.add_frame(AddEquipment, 'AddE')
 
         # Debug mode
         self.debug_mode = debug_mode
@@ -143,8 +145,8 @@ class SignUpFrame(ctk.CTkFrame):
 
         # Button to go back to the login page
         # Run the show frame command for the login page
-        self.go_back_button = ctk.CTkButton(self.container, text='Go Back', command=lambda: self.master.show_frame('Login'))
-        self.go_back_button.pack(pady=(5, 15))
+        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: self.master.show_frame('Login'))
+        self.back_button.pack(pady=(5, 15))
 
     # Function to validate the info
     def validate_info(self):
@@ -227,15 +229,21 @@ class DatabaseFrame(ctk.CTkFrame):
         self.label.grid(row=0, columnspan=2, padx=10, pady=(20, 10), sticky='n')
 
         self.database = ctk.CTkScrollableFrame(self.container, width=260)
-        self.database.grid(row=1, column=0, padx=20, pady=(0, 20), sticky='nsew')
+        self.database.grid(row=1, columnspan=2, padx=20, pady=(0, 20), sticky='nsew')
 
         self.database.grid_columnconfigure(0, weight=1)
 
-        self.create_report_button = ctk.CTkButton(self.container, text='Create Report')
-        self.create_report_button.grid(row=2, column=0, padx=15, pady=5)
+        self.add_contact_button = ctk.CTkButton(self.container, text='Add Contact')
+        self.add_contact_button.grid(row=3, column=0, padx=(15, 5), pady=5)
 
-        self.exit_button = ctk.CTkButton(self.container, text='Exit Program', command=self.master.quit)
-        self.exit_button.grid(row=3, column=0, padx=15, pady=(5, 10))
+        self.add_equipment_button = ctk.CTkButton(self.container, text='Add Equipment')
+        self.add_equipment_button.grid(row=3, column=1, padx=(0, 15), pady=5)
+
+        self.create_report_button = ctk.CTkButton(self.container, text='Create Report')
+        self.create_report_button.grid(row=2, columnspan=2, padx=15, pady=5)
+
+        self.exit_button = ctk.CTkButton(self.container, text='Exit Program', fg_color='#243573', command=self.master.quit)
+        self.exit_button.grid(row=4, columnspan=2, padx=15, pady=(5, 10))
 
         self.row_counter = 0
 
@@ -287,17 +295,85 @@ class DatabaseFrame(ctk.CTkFrame):
         label.configure(text_color='white')
 
     def on_name_click(self, event, name):
-        print(f"Clicked on name: {name}")
+        contact_data = DatabaseFunctions.get_contact_data()
+        for fname, lname, phone, email in contact_data:
+            full_name = f"{fname} {lname}"
+            if full_name == name:
+                # Display contact details
+                self.master.frames['CData'].show_data(fname, lname, phone, email)
+                self.master.show_frame('CData')
+                break
 
     def on_eq_click(self, event, equipment):
-        print(f"Clicked on equipment: {equipment['Ename']} in {equipment['Department']}")
+        equipment_data = DatabaseFunctions.get_equipment_data()
+        for contact_id, ename, date_installed, decomissioned, decomissioned_date, equipment_age, maintenance_date, department in equipment_data:
+            e_data = {'Ename': ename, 'Department': department}
+            if e_data == equipment:
+                self.master.frames['EData'].show_data(contact_id, ename, date_installed, decomissioned, decomissioned_date,
+                                                      equipment_age, maintenance_date, department)
+                self.master.show_frame('EData')
+                break
 
-class ViewData(ctk.CTkFrame):
+class ViewContactData(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
 
-        pass
+        self.container = ctk.CTkFrame(self)
+        self.container.pack(expand=True, padx=20, pady=20)
 
+        self.label = ctk.CTkLabel(self.container, text='Contact Details', font=('Arial', 20))
+        self.label.pack(padx=20, pady=10)
+
+        self.details_label = ctk.CTkLabel(self.container, text='', font=('Arial', 15))
+        self.details_label.pack(padx=20, pady=10)
+
+        self.delete_button = ctk.CTkButton(self.container, text='Delete Entry')
+        self.delete_button.pack(pady=(10, 5))
+
+        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: self.master.show_frame('Database'))
+        self.back_button.pack(pady=(5, 10))
+
+    def show_data(self, fname, lname, phone, email):
+        details = f'First Name: {fname}\nLast Name: {lname}\nPhone: {phone}\nEmail: {email}'
+        self.details_label.configure(text=details)
+
+class ViewEquipmentData(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.container = ctk.CTkFrame(self)
+        self.container.pack(expand=True, padx=20, pady=20)
+
+        self.label = ctk.CTkLabel(self.container, text='Equipment Details', font=('Arial', 20))
+        self.label.pack(padx=20, pady=10)
+
+        self.details_label = ctk.CTkLabel(self.container, text='', font=('Arial', 15))
+        self.details_label.pack(padx=20, pady=10)
+
+        self.delete_button = ctk.CTkButton(self.container, text='Delete Entry')
+        self.delete_button.pack(pady=(10, 5))
+
+        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: self.master.show_frame('Database'))
+        self.back_button.pack(pady=(5, 10))
+
+    def show_data(self, contact_id, ename, date_installed, decomissioned, decomissioned_date, 
+                  equipment_age, maintenance_date, department):
+        details = f'Equipment: {ename}\nDepartment: {department}\nDate Installed: {date_installed}\nEquipment Age: {equipment_age}\nMaintenance Date: {maintenance_date}\nDecomissioned: {decomissioned}\nDecomissioned Date: {decomissioned_date}'
+        self.details_label.configure(text=details)
+
+class AddContact(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.container = ctk.CTkFrame(self)
+        self.container.pack(expand=True, padx=20, pady=20)
+
+class AddEquipment(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.container = ctk.CTkFrame(self)
+        self.container.pack(expand=True, padx=20, pady=20)
 
 if __name__ == '__main__':
     # Run the program in the debug mode
