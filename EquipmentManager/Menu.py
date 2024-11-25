@@ -234,13 +234,13 @@ class DatabaseFrame(ctk.CTkFrame):
         self.database.grid_columnconfigure(0, weight=1)
 
         self.add_contact_button = ctk.CTkButton(self.container, text='Add Contact')
-        self.add_contact_button.grid(row=3, column=0, padx=(15, 5), pady=5)
+        self.add_contact_button.grid(row=2, column=0, padx=(15, 5), pady=5)
 
         self.add_equipment_button = ctk.CTkButton(self.container, text='Add Equipment')
-        self.add_equipment_button.grid(row=3, column=1, padx=(0, 15), pady=5)
+        self.add_equipment_button.grid(row=2, column=1, padx=(0, 15), pady=5)
 
         self.create_report_button = ctk.CTkButton(self.container, text='Create Report')
-        self.create_report_button.grid(row=2, columnspan=2, padx=15, pady=5)
+        self.create_report_button.grid(row=3, columnspan=2, padx=15, pady=5)
 
         self.exit_button = ctk.CTkButton(self.container, text='Exit Program', fg_color='#243573', command=self.master.quit)
         self.exit_button.grid(row=4, columnspan=2, padx=15, pady=(5, 10))
@@ -356,8 +356,7 @@ class ViewEquipmentData(ctk.CTkFrame):
         self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: self.master.show_frame('Database'))
         self.back_button.pack(pady=(5, 10))
 
-    def show_data(self, contact_id, ename, date_installed, decomissioned, decomissioned_date, 
-                  equipment_age, maintenance_date, department):
+    def show_data(self, contact_id, ename, date_installed, decomissioned, decomissioned_date, equipment_age, maintenance_date, department):
         details = f'Equipment: {ename}\nDepartment: {department}\nDate Installed: {date_installed}\nEquipment Age: {equipment_age}\nMaintenance Date: {maintenance_date}\nDecomissioned: {decomissioned}\nDecomissioned Date: {decomissioned_date}'
         self.details_label.configure(text=details)
 
