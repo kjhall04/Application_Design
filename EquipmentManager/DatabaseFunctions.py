@@ -54,7 +54,7 @@ def get_equipment_data() -> list:
     # Search query for all the equipment values
     search_query = '''
     SELECT contact_id, Ename, DateInstalled, Decomissioned, DecomissionedDate,
-    EquipmentAge, MaintenanceDate, Department FROM equipment
+    MaintenanceDate, Department FROM equipment
     '''
     # Retrieve data and put into a list
     cursor.execute(search_query)
@@ -68,7 +68,7 @@ def get_equipment_data() -> list:
     return data
 
 # Add login data to database
-def add_login(fname:str, lname:str, username:str, password:str) -> str | None:
+def add_login(fname:str, lname:str, username:str, password:str) -> str | bool | None:
     # Connect to database
     conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
@@ -89,8 +89,10 @@ def add_login(fname:str, lname:str, username:str, password:str) -> str | None:
     
     conn.close()
 
+    return True
+
 # Add contact data to database
-def add_contact(fname:str, lname:str, phone_number:str, email:str) -> str | None:
+def add_contact(fname:str, lname:str, phone_number:str, email:str) -> str | bool | None:
     # Connect to database
     conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
@@ -111,9 +113,11 @@ def add_contact(fname:str, lname:str, phone_number:str, email:str) -> str | None
     
     conn.close()
 
+    return True
+
 # Add equipment data to database
 def add_equipment(fname:str, lname:str, ename:str, date_installed:str, decomissioned:str, decomisioned_date:str, 
-                  equipment_age:str, maintenance_date:str, department:str) -> str | None:
+                  maintenance_date:str, department:str) -> str | bool | None:
     # Connect to database
     conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
     conn.execute("PRAGMA foreign_keys = ON;")
@@ -121,14 +125,13 @@ def add_equipment(fname:str, lname:str, ename:str, date_installed:str, decomissi
 
     # Data to insert
     insert_query = '''
-    INSERT INTO equipment (contact_id, Ename, DateInstalled, Decomissioned, DecomissionedDate, 
-    EquipmentAge, MaintenanceDate, Department)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    INSERT INTO equipment (contact_id, Ename, DateInstalled, Decomissioned, DecomissionedDate, MaintenanceDate, Department)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
     '''
     # Get the contact id from the contact list to connect equipment to contact
     contact_id = get_contact_id(fname, lname)
 
-    data = contact_id, ename, date_installed, decomissioned, decomisioned_date, equipment_age, maintenance_date, department
+    data = contact_id, ename, date_installed, decomissioned, decomisioned_date, maintenance_date, department
 
     if validate_database_entry('equipment', data):
         return 'This data is already in the database.'
@@ -137,6 +140,8 @@ def add_equipment(fname:str, lname:str, ename:str, date_installed:str, decomissi
         conn.commit()
     
     conn.close()
+
+    return True
 
 # Retireve the contact id for the equipment table
 def get_contact_id(fname:str, lname:str) -> int:
@@ -171,9 +176,9 @@ def validate_database_entry(table_name:str, data:list) -> bool:
                             AND Lname = ? AND PhoneNumber = ? AND Email = ?'''
     elif table_name == 'equipment':
         validate_query = '''SELECT contact_id, Ename, DateInstalled, Decomissioned, DecomissionedDate, 
-                            EquipmentAge, MaintenanceDate, Department FROM equipment WHERE contact_id = ? 
+                            MaintenanceDate, Department FROM equipment WHERE contact_id = ? 
                             AND Ename = ? AND DateInstalled = ? AND Decomissioned = ? AND DecomissionedDate = ? 
-                            AND EquipmentAge = ? AND MaintenanceDate = ? AND Department = ?'''
+                            AND MaintenanceDate = ? AND Department = ?'''
     else:
         return False  # Invalid table name
 
@@ -227,13 +232,14 @@ def get_all_data_for_menu() -> dict:
 # Test functionality here
 if __name__ == '__main__':
 
-    # add_contact('John', 'Estes', '632-456-7892', 'jestes@gmail.com')
-    # print(add_equipment('Henry', 'Jones', 'Monitor', '10/04/2024', 'False', 'N/A', '1 month', '01/01/2025', 'I.T.'))
+    # print(add_contact('John', 'Estes', '601-987-4566', 'jestes@gmail.com'))
+    # print(add_equipment('John', 'Estes', 'Desktop', '10/04/2024', 'False', 'N/A', '01/01/2025', 'I.T.'))
 
     # print(get_login_data())
     # print(get_contact_data())
     # print(get_equipment_data())
     
     # print(get_all_data_for_menu())
+    # print(add_login('Kaleb', 'Hall', 'manager4', '12345678'))
 
     pass

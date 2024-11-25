@@ -24,7 +24,6 @@ def create_database():
         DateInstalled TEXT NOT NULL,
         Decomissioned TEXT NOT NULL,
         DecomissionedDate TEXT NOT NULL,
-        EquipmentAge TEXT NOT NULL,
         MaintenanceDate TEXT NOT NULL,
         Department TEXT NOT NULL,
         FOREIGN KEY (contact_id) REFERENCES contact(id)
