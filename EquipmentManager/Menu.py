@@ -13,12 +13,6 @@ class FrameManager(ctk.CTk):
         self.title('Equipment Manager')
         self.geometry('1000x580')
 
-        # Add background image
-        self.background_image = ctk.CTkImage(Image.open("EquipmentManager\\background.png"), size=(1000, 580))
-        self.background_label = ctk.CTkLabel(self, image=self.background_image, text="")
-        self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
-        self.background_label.lower() 
-
         # Configure layout grid
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -52,7 +46,6 @@ class FrameManager(ctk.CTk):
     def add_frame(self, page_class, name):
         # Add frames and set transparency
         frame = page_class(self)
-        frame.configure(fg_color="transparent")  # Ensure frames allow background to show
         self.frames[name] = frame
         frame.grid(row=0, column=0, sticky='nsew')
 
