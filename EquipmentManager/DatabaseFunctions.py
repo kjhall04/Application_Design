@@ -157,8 +157,14 @@ def get_contact_id(fname:str, lname:str) -> int:
     # If search for the id where there is a specific first name and last name
     cursor.execute(search_query, (fname, lname))
     contact_id = cursor.fetchone()
+
+    if contact_id is None:
+        # Either return a default value or raise an exception
+        conn.close()
+        return f"No contact found with first name '{fname}' and last name '{lname}'"
     
     # return the first value from the fetchone tuple (this is the id for the proper contact)
+    conn.close()
     return contact_id[0]
 
 def validate_database_entry(table_name:str, data:list) -> bool:
@@ -191,10 +197,12 @@ def validate_database_entry(table_name:str, data:list) -> bool:
         return False
     return True  # If the result is not None, the data already exists
 
-def get_all_data_for_menu() -> dict:
+def get_all_data_for_menu() -> list:
     conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
+    conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
+    # Use LEFT JOIN to include all contacts, even if they don't have equipment
     query = '''
     SELECT
         contact.Fname,
@@ -203,7 +211,7 @@ def get_all_data_for_menu() -> dict:
         equipment.Department
     FROM
         contact
-    INNER JOIN
+    LEFT JOIN
         equipment
     ON
         contact.id = equipment.contact_id
@@ -216,18 +224,17 @@ def get_all_data_for_menu() -> dict:
 
     data_list = []
     for row in results:
-        # Append each record as a dictionary
+        # Append each record as a list
         data_list.append({
             "Fname": row[0],
             "Lname": row[1],
-            "Ename": row[2],
-            "Department": row[3],
+            "Ename": row[2] if row[2] else "No Equipment",  # Handle NULL values
+            "Department": row[3] if row[3] else "N/A",  # Handle NULL values
         })
 
     conn.close()
 
     return data_list
-
 
 # Test functionality here
 if __name__ == '__main__':
@@ -239,7 +246,7 @@ if __name__ == '__main__':
     # print(get_contact_data())
     # print(get_equipment_data())
     
-    # print(get_all_data_for_menu())
+    print(get_all_data_for_menu())
     # print(add_login('Kaleb', 'Hall', 'manager4', '12345678'))
 
     pass

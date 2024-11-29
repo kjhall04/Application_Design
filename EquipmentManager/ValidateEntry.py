@@ -39,9 +39,9 @@ def email(entry:str) -> bool | str:
 
 def boolean(entry:str) -> bool | str:
     # Validates a string representation of a boolean, accepting 'true' or 'false'.
-    if entry.lower() == 'true':
+    if entry == 'True':
         return True
-    elif entry.lower() == 'false':
+    elif entry == 'False':
         return True
     else:
         return f"'{entry}' is invalid. Expected 'True' or 'False'."

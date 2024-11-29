@@ -16,19 +16,19 @@ class SignUpFrame(ctk.CTkFrame):
         self.label.pack(padx=40, pady=10)
 
         # Entry for the first name
-        self.fname_entry = ctk.CTkEntry(self.container, placeholder_text='Enter your first name')
+        self.fname_entry = ctk.CTkEntry(self.container, placeholder_text='First Name')
         self.fname_entry.pack(pady=5)
 
         # Entry for the last name
-        self.lname_entry = ctk.CTkEntry(self.container, placeholder_text='Enter your last name')
+        self.lname_entry = ctk.CTkEntry(self.container, placeholder_text='Last Name')
         self.lname_entry.pack(pady=5)
 
         # Entry for the Username
-        self.username_entry = ctk.CTkEntry(self.container, placeholder_text='Enter a Username')
+        self.username_entry = ctk.CTkEntry(self.container, placeholder_text='Username')
         self.username_entry.pack(pady=5)
 
         # Entry for the Password
-        self.password_entry = ctk.CTkEntry(self.container, placeholder_text='Enter a Password')
+        self.password_entry = ctk.CTkEntry(self.container, placeholder_text='Password')
         self.password_entry.pack(pady=5)
 
         # Sign up button to add login info to the database
@@ -42,7 +42,7 @@ class SignUpFrame(ctk.CTkFrame):
 
         # Button to go back to the login page
         # Run the show frame command for the login page
-        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: self.master.show_frame('Login'))
+        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: (self.master.show_frame('Login'), self.clear_entries()))
         self.back_button.pack(pady=(5, 15))
 
     # Function to validate the info

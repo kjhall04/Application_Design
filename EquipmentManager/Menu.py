@@ -50,8 +50,11 @@ class FrameManager(ctk.CTk):
         frame.grid(row=0, column=0, sticky='nsew')
 
     def show_frame(self, name):
-        # Raise the selected frame to the top
-        self.frames[name].tkraise()
+        frame = self.frames[name]
+        if hasattr(frame, 'refresh_data'):
+            frame.refresh_data()  # Refresh data if the frame has this method
+        frame.tkraise()
+
 
     def login_succesful(self):
         self.show_frame('Loading')
