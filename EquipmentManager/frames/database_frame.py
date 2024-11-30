@@ -14,7 +14,7 @@ class DatabaseFrame(ctk.CTkFrame):
         self.label = ctk.CTkLabel(self.container, text='Database', font=('Arial', 25))
         self.label.grid(row=0, columnspan=2, padx=10, pady=(20, 10), sticky='n')
 
-        self.database = ctk.CTkScrollableFrame(self.container, width=300)
+        self.database = ctk.CTkScrollableFrame(self.container, width=350)
         self.database.grid(row=1, columnspan=2, padx=20, pady=(0, 20), sticky='nsew')
 
         self.database.grid_columnconfigure(0, weight=1)
