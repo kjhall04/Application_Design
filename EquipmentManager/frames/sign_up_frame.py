@@ -85,7 +85,16 @@ class SignUpFrame(ctk.CTkFrame):
             self.clear_entries()
     
     def clear_entries(self):
+        # Clear the entries
         self.fname_entry.delete(0, 'end')
         self.lname_entry.delete(0, 'end')
         self.username_entry.delete(0, 'end')
         self.password_entry.delete(0, 'end')
+
+        # Reset placeholder text manually
+        self.fname_entry.configure(placeholder_text='First Name')
+        self.lname_entry.configure(placeholder_text='Last Name')
+        self.username_entry.configure(placeholder_text='Username')
+        self.password_entry.configure(placeholder_text='Password')
+
+        self.error_label.configure(text='')

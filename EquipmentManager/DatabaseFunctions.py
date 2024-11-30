@@ -49,7 +49,7 @@ def get_equipment_data() -> list:
 
 
 # Add login data to the database
-def add_login(fname: str, lname: str, username: str, password: str) -> str | bool | None:
+def add_login(fname: str, lname: str, username: str, password: str) -> str | bool:
     query = '''
     INSERT INTO login_data (Fname, Lname, Username, Password)
     VALUES (?, ?, ?, ?);
@@ -64,7 +64,7 @@ def add_login(fname: str, lname: str, username: str, password: str) -> str | boo
 
 
 # Add contact data to the database
-def add_contact(fname: str, lname: str, phone_number: str, email: str) -> str | bool | None:
+def add_contact(fname: str, lname: str, phone_number: str, email: str) -> str | bool:
     query = '''
     INSERT INTO contact (Fname, Lname, PhoneNumber, Email)
     VALUES (?, ?, ?, ?);
@@ -80,7 +80,7 @@ def add_contact(fname: str, lname: str, phone_number: str, email: str) -> str | 
 
 # Add equipment data to the database
 def add_equipment(fname: str, lname: str, ename: str, date_installed: str, decomissioned: str, 
-                  decomissioned_date: str, maintenance_date: str, department: str) -> str | bool | None:
+                  decomissioned_date: str, maintenance_date: str, department: str) -> str | bool:
     contact_id = get_contact_id(fname, lname)
     if isinstance(contact_id, str):
         return contact_id  # Return error message if no contact is found
@@ -100,7 +100,7 @@ def add_equipment(fname: str, lname: str, ename: str, date_installed: str, decom
 
 
 # Retrieve the contact id for the equipment table
-def get_contact_id(fname: str, lname: str) -> int:
+def get_contact_id(fname: str, lname: str) -> str | int:
     query = '''
     SELECT id FROM contact WHERE Fname = ? AND Lname = ?
     '''
@@ -144,8 +144,7 @@ def get_all_data_for_menu() -> list:
     SELECT
         contact.Fname,
         contact.Lname,
-        equipment.Ename,
-        equipment.Department
+        equipment.Ename
     FROM
         contact
     LEFT JOIN
@@ -162,29 +161,46 @@ def get_all_data_for_menu() -> list:
         data_list.append({
             "Fname": row[0],
             "Lname": row[1],
-            "Ename": row[2] if row[2] else "No Equipment",
-            "Department": row[3] if row[3] else "N/A",
+            "Ename": row[2] if row[2] else "N/A"
         })
 
     return data_list
 
+def delete_contact_and_equipment(fname: str, lname: str, phone_number: str, email: str) -> bool:
+    delete_query = '''
+    DELETE FROM contact WHERE Fname = ? AND Lname = ? AND PhoneNumber = ? AND Email = ?;
+    '''
+    data = fname, lname, phone_number, email
+
+    db_manager.execute_query(delete_query, data, fetch_all=False)
+    return True
+
+def delete_equipment(ename: str, date_installed: str, decomissioned: str, 
+                     decomissioned_date: str, maintenance_date: str, department: str) -> bool:
+    delete_query = '''
+    DELETE FROM equipment WHERE Ename = ? AND DateInstalled = ? AND Decomissioned = ? AND DecomissionedDate = ? AND MaintenanceDate = ? AND Department = ?;
+    '''
+    data = ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department
+
+    db_manager.execute_query(delete_query, data, fetch_all=False)
+    return True
 
 # Close the database connection when done
-def close_database():
+def close_database() -> None:
     db_manager.close()
 
 
 # Test functionality here
 if __name__ == '__main__':
 
-    # print(add_contact('John', 'Estes', '601-987-4566', 'jestes@gmail.com'))
-    # print(add_equipment('John', 'Estes', 'Desktop', '10/04/2024', 'False', 'N/A', '01/01/2025', 'I.T.'))
+    # print(add_contact('Henry', 'Jones', '601-895-2344', 'hjones@gmail.com'))
+    # print(add_equipment('Henry', 'Jones', 'Router', '10/04/2024', 'False', 'N/A', '01/01/2025', 'I.T.'))
 
     # print(get_login_data())
     # print(get_contact_data())
     # print(get_equipment_data())
     
-    print(get_all_data_for_menu())
+    # print(get_all_data_for_menu())
     # print(add_login('Kaleb', 'Hall', 'manager4', '12345678'))
 
     pass

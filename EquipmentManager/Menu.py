@@ -55,7 +55,6 @@ class FrameManager(ctk.CTk):
             frame.refresh_data()  # Refresh data if the frame has this method
         frame.tkraise()
 
-
     def login_succesful(self):
         self.show_frame('Loading')
         self.frames['Loading'].animate_loading()

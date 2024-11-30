@@ -40,10 +40,7 @@ class DatabaseFrame(ctk.CTkFrame):
             full_name = f"{entry['Fname']} {entry['Lname']}"
             if full_name not in grouped_data:
                 grouped_data[full_name] = []
-            grouped_data[full_name].append({
-                'Ename': entry['Ename'],
-                'Department': entry['Department']
-            })
+            grouped_data[full_name].append({'Ename': entry['Ename']})
 
         for name, equipment_list in grouped_data.items():
             name_label = ctk.CTkLabel(
@@ -52,7 +49,7 @@ class DatabaseFrame(ctk.CTkFrame):
                 font=('Arial', 15), 
                 anchor='center'
             )
-            name_label.grid(row=self.row_counter, column=0, padx=10, pady=5, sticky= 'w')
+            name_label.grid(row=self.row_counter, column=0, padx=10, pady=5, sticky='w')
             self.row_counter += 1
 
             name_label._label.configure(cursor='hand2')
@@ -64,11 +61,11 @@ class DatabaseFrame(ctk.CTkFrame):
             for equipment in equipment_list:
                 equipment_label = ctk.CTkLabel(
                     self.database,
-                    text=f"{equipment['Ename']} ({equipment['Department']})",
+                    text=f"{equipment['Ename']}",
                     font=('Arial', 14),
                     anchor='w'
                 )
-                equipment_label.grid(row=self.row_counter-1, column=1, padx=10, pady=5, sticky= 'w')
+                equipment_label.grid(row=self.row_counter - 1, column=1, padx=10, pady=5, sticky='w')
                 self.row_counter += 1
 
                 equipment_label._label.configure(cursor='hand2')
@@ -76,6 +73,7 @@ class DatabaseFrame(ctk.CTkFrame):
                 equipment_label.bind('<Enter>', lambda e, label=equipment_label: self.on_hover(e, label))
                 equipment_label.bind('<Leave>', lambda e, label=equipment_label: self.on_leave(e, label))  # When cursor leaves
                 equipment_label.bind('<Button-1>', lambda e, eq=equipment: self.on_eq_click(e, eq))
+
 
     def on_hover(self, event, label):
         label.configure(text_color='gray')
@@ -96,10 +94,10 @@ class DatabaseFrame(ctk.CTkFrame):
     def on_eq_click(self, event, equipment):
         equipment_data = DatabaseFunctions.get_equipment_data()
         for contact_id, ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department in equipment_data:
-            e_data = {'Ename': ename, 'Department': department}
-            if e_data == equipment:
-                self.master.frames['EData'].show_data(contact_id, ename, date_installed, decomissioned, decomissioned_date,
-                                                      maintenance_date, department)
+            if ename == equipment['Ename']:  # Compare the equipment name directly
+                self.master.frames['EData'].show_data(
+                    contact_id, ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department
+                )
                 self.master.show_frame('EData')
                 break
 
@@ -118,17 +116,13 @@ class DatabaseFrame(ctk.CTkFrame):
             full_name = f"{entry['Fname']} {entry['Lname']}"
             if full_name not in grouped_data:
                 grouped_data[full_name] = []
-            grouped_data[full_name].append({
-                'Ename': entry['Ename'],
-                'Department': entry['Department']
-            })
+            grouped_data[full_name].append({'Ename': entry['Ename']})
 
-        # Repopulate the UI with updated data
         for name, equipment_list in grouped_data.items():
             name_label = ctk.CTkLabel(
-                self.database,
-                text=name,
-                font=('Arial', 15),
+                self.database, 
+                text=name, 
+                font=('Arial', 15), 
                 anchor='center'
             )
             name_label.grid(row=self.row_counter, column=0, padx=10, pady=5, sticky='w')
@@ -137,13 +131,13 @@ class DatabaseFrame(ctk.CTkFrame):
             name_label._label.configure(cursor='hand2')
 
             name_label.bind('<Enter>', lambda e, label=name_label: self.on_hover(e, label))
-            name_label.bind('<Leave>', lambda e, label=name_label: self.on_leave(e, label))
+            name_label.bind('<Leave>', lambda e, label=name_label: self.on_leave(e, label))  # When cursor leaves
             name_label.bind('<Button-1>', lambda e, name=name: self.on_name_click(e, name))
 
             for equipment in equipment_list:
                 equipment_label = ctk.CTkLabel(
                     self.database,
-                    text=f"{equipment['Ename']} ({equipment['Department']})",
+                    text=f"{equipment['Ename']}",
                     font=('Arial', 14),
                     anchor='w'
                 )
@@ -153,5 +147,5 @@ class DatabaseFrame(ctk.CTkFrame):
                 equipment_label._label.configure(cursor='hand2')
 
                 equipment_label.bind('<Enter>', lambda e, label=equipment_label: self.on_hover(e, label))
-                equipment_label.bind('<Leave>', lambda e, label=equipment_label: self.on_leave(e, label))
+                equipment_label.bind('<Leave>', lambda e, label=equipment_label: self.on_leave(e, label))  # When cursor leaves
                 equipment_label.bind('<Button-1>', lambda e, eq=equipment: self.on_eq_click(e, eq))

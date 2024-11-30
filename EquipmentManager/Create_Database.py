@@ -26,7 +26,7 @@ def create_database():
         DecomissionedDate TEXT NOT NULL,
         MaintenanceDate TEXT NOT NULL,
         Department TEXT NOT NULL,
-        FOREIGN KEY (contact_id) REFERENCES contact(id)
+        FOREIGN KEY (contact_id) REFERENCES contact(id) ON DELETE CASCADE
     );
 
     CREATE TABLE IF NOT EXISTS login_data (
@@ -46,8 +46,6 @@ def create_database():
 
     # Exit database
     conn.close()
-
-    print('Equipment database created successfully.')
 
 if __name__ == '__main__':
     create_database()

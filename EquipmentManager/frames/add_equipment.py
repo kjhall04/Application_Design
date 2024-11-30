@@ -92,3 +92,14 @@ class AddEquipment(ctk.CTkFrame):
         self.decomissioned_date_entry.delete(0, 'end')
         self.maintenance_date_entry.delete(0, 'end')
         self.department_entry.delete(0, 'end')
+
+        self.fname_entry.configure(placeholder_text='Contact First Name')
+        self.lname_entry.configure(placeholder_text='Contact Last Name')
+        self.ename_entry.configure(placeholder_text='Equipment Name')
+        self.date_installed_entry.configure(placeholder_text='Date Installed')
+        self.decomissioned_entry.configure(placeholder_text='Decomissioned')
+        self.decomissioned_date_entry.configure(placeholder_text='Decomissioned Date')
+        self.maintenance_date_entry.configure(placeholder_text='Maintenance Date')
+        self.department_entry.configure(placeholder_text='Department')
+
+        self.error_label.configure(text='')
