@@ -54,7 +54,7 @@ def password(entry:str) -> bool | str:
     else:
         return other_fields(entry)
 
-def decomissioned_date(entry:str) -> bool | str:
+def date_or_NA(entry:str) -> bool | str:
     # Decomissioned_date can be a date or N/A
     # Validates if it is one or the other
     if date(entry) is True:

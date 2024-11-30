@@ -59,8 +59,8 @@ class AddEquipment(ctk.CTkFrame):
             ('Equipment Name', ValidateEntry.other_fields(ename)),
             ('Date Installed', ValidateEntry.date(date_installed)),
             ('Decomissioned', ValidateEntry.boolean(decomissioned)),
-            ('Decomissioned Date', ValidateEntry.decomissioned_date(decomissioned_date)),
-            ('Maintenance Date', ValidateEntry.date(maintenance_date)),
+            ('Decomissioned Date', ValidateEntry.date_or_NA(decomissioned_date)),
+            ('Maintenance Date', ValidateEntry.date_or_NA(maintenance_date)),
             ('Department', ValidateEntry.other_fields(department))
         ]
 
@@ -80,6 +80,7 @@ class AddEquipment(ctk.CTkFrame):
         if action != True:
             self.error_label.configure(text=action)
         else:
+            self.master.frames['Database'].refresh_data()
             self.master.show_frame('Database')
             self.clear_entries()
     

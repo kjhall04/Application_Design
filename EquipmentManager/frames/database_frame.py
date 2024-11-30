@@ -4,6 +4,7 @@ import DatabaseFunctions
 class DatabaseFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
+        self.data_cache = {}
 
         self.container = ctk.CTkFrame(self)
         self.container.pack(expand=True, padx=20, pady=20)
@@ -102,6 +103,16 @@ class DatabaseFrame(ctk.CTkFrame):
                 break
 
     def refresh_data(self):
+        # Fetch updated data from the database
+        new_data = self.get_grouped_data()
+
+        # Compare with cached data
+        if new_data == self.data_cache:
+            return  # No changes, so no need to refresh
+
+        # Update the cache and rebuild the UI
+        self.data_cache = new_data
+
         # Clear existing UI components in the scrollable frame
         for widget in self.database.winfo_children():
             widget.destroy()
@@ -149,3 +160,15 @@ class DatabaseFrame(ctk.CTkFrame):
                 equipment_label.bind('<Enter>', lambda e, label=equipment_label: self.on_hover(e, label))
                 equipment_label.bind('<Leave>', lambda e, label=equipment_label: self.on_leave(e, label))  # When cursor leaves
                 equipment_label.bind('<Button-1>', lambda e, eq=equipment: self.on_eq_click(e, eq))
+
+    def get_grouped_data(self):
+        data_list = DatabaseFunctions.get_all_data_for_menu()
+
+        grouped_data = {}
+        for entry in data_list:
+            full_name = f"{entry['Fname']} {entry['Lname']}"
+            if full_name not in grouped_data:
+                grouped_data[full_name] = []
+            grouped_data[full_name].append({'Ename': entry['Ename']})
+
+        return grouped_data

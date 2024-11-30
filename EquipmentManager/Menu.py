@@ -1,6 +1,5 @@
 import customtkinter as ctk
-from PIL import Image  # Required for handling images
-from frames import *
+from Frames import *
 
 # Set the default appearance of the GUI to dark mode and the colors to dark-blue
 ctk.set_appearance_mode('dark')
@@ -51,8 +50,6 @@ class FrameManager(ctk.CTk):
 
     def show_frame(self, name):
         frame = self.frames[name]
-        if hasattr(frame, 'refresh_data'):
-            frame.refresh_data()  # Refresh data if the frame has this method
         frame.tkraise()
 
     def login_succesful(self):

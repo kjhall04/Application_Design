@@ -10,9 +10,10 @@ class ViewContactData(ctk.CTkFrame):
 
         self.label = ctk.CTkLabel(self.container, text='Contact Details', font=('Arial', 20))
         self.label.pack(padx=20, pady=10)
-        
-        self.details_label = ctk.CTkLabel(self.container, text='', font=('Arial', 15))
-        self.details_label.pack(padx=20, pady=10)
+
+        # Create a frame for the details grid
+        self.details_frame = ctk.CTkFrame(self.container)
+        self.details_frame.pack(padx=20, pady=10)
 
         self.delete_button = ctk.CTkButton(self.container, text='Delete Entry', command=lambda: self.delete_entry())
         self.delete_button.pack(pady=(10, 5))
@@ -26,12 +27,23 @@ class ViewContactData(ctk.CTkFrame):
         self.phone = phone
         self.email = email
 
-        details = f'First Name: {fname}\nLast Name: {lname}\nPhone: {phone}\nEmail: {email}'
-        self.details_label.configure(text=details)
-        return
+        # Clear the grid to avoid overlapping data
+        for widget in self.details_frame.winfo_children():
+            widget.destroy()
+
+        # Create a grid layout for details
+        data_labels = ['First Name', 'Last Name', 'Phone', 'Email']
+        data_values = [fname, lname, phone, email]
+
+        for i, (label, value) in enumerate(zip(data_labels, data_values)):
+            label_widget = ctk.CTkLabel(self.details_frame, text=f'{label}:', font=('Arial', 15), anchor='e')
+            label_widget.grid(row=i, column=0, sticky='e', padx=10, pady=5)
+
+            value_widget = ctk.CTkLabel(self.details_frame, text=value, font=('Arial', 15), anchor='w')
+            value_widget.grid(row=i, column=1, sticky='w', padx=10, pady=5)
 
     def delete_entry(self):
         if hasattr(self, 'fname') and hasattr(self, 'lname') and hasattr(self, 'phone') and hasattr(self, 'email'):
             DatabaseFunctions.delete_contact_and_equipment(self.fname, self.lname, self.phone, self.email)
+            self.master.frames['Database'].refresh_data()
             self.master.show_frame('Database')
-        return

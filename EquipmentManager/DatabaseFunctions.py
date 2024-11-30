@@ -45,26 +45,12 @@ def get_equipment_data() -> list:
            MaintenanceDate, Department
     FROM equipment
     '''
-    # Retrieve data and put into a list
-    cursor.execute(search_query)
-    rows = cursor.fetchall()
-    data = []
-    for row in rows:
-        data.append(row)
+    return db_manager.execute_query(query)
 
-    # Exit database
-    conn.close()
-    return data
 
-# Add login data to database
-def add_login(fname:str, lname:str, username:str, password:str) -> str | bool | None:
-    # Connect to database
-    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
-    conn.execute("PRAGMA foreign_keys = ON;")
-    cursor = conn.cursor()
-
-    # Data to insert
-    insert_query = '''
+# Add login data to the database
+def add_login(fname: str, lname: str, username: str, password: str) -> str | bool:
+    query = '''
     INSERT INTO login_data (Fname, Lname, Username, Password)
     VALUES (?, ?, ?, ?);
     '''
@@ -76,15 +62,10 @@ def add_login(fname:str, lname:str, username:str, password:str) -> str | bool | 
         db_manager.execute_query(query, data, fetch_all=False)
         return True
 
-# Add contact data to database
-def add_contact(fname:str, lname:str, phone_number:str, email:str) -> str | bool | None:
-    # Connect to database
-    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
-    conn.execute("PRAGMA foreign_keys = ON;")
-    cursor = conn.cursor()
 
-    # Data to insert
-    insert_query = '''
+# Add contact data to the database
+def add_contact(fname: str, lname: str, phone_number: str, email: str) -> str | bool:
+    query = '''
     INSERT INTO contact (Fname, Lname, PhoneNumber, Email)
     VALUES (?, ?, ?, ?);
     '''
@@ -96,17 +77,17 @@ def add_contact(fname:str, lname:str, phone_number:str, email:str) -> str | bool
         db_manager.execute_query(query, data, fetch_all=False)
         return True
 
-# Add equipment data to database
-def add_equipment(fname:str, lname:str, ename:str, date_installed:str, decomissioned:str, decomisioned_date:str, 
-                  maintenance_date:str, department:str) -> str | bool | None:
-    # Connect to database
-    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
-    conn.execute("PRAGMA foreign_keys = ON;")
-    cursor = conn.cursor()
 
-    # Data to insert
-    insert_query = '''
-    INSERT INTO equipment (contact_id, Ename, DateInstalled, Decomissioned, DecomissionedDate, MaintenanceDate, Department)
+# Add equipment data to the database
+def add_equipment(fname: str, lname: str, ename: str, date_installed: str, decomissioned: str, 
+                  decomissioned_date: str, maintenance_date: str, department: str) -> str | bool:
+    contact_id = get_contact_id(fname, lname)
+    if isinstance(contact_id, str):
+        return contact_id  # Return error message if no contact is found
+
+    query = '''
+    INSERT INTO equipment (contact_id, Ename, DateInstalled, Decomissioned, DecomissionedDate, 
+                           MaintenanceDate, Department)
     VALUES (?, ?, ?, ?, ?, ?, ?);
     '''
     data = contact_id, ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department
@@ -117,15 +98,10 @@ def add_equipment(fname:str, lname:str, ename:str, date_installed:str, decomissi
         db_manager.execute_query(query, data, fetch_all=False)
         return True
 
-# Retireve the contact id for the equipment table
-def get_contact_id(fname:str, lname:str) -> int:
-    # Connect to database
-    conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
-    conn.execute("PRAGMA foreign_keys = ON;")
-    cursor = conn.cursor()
 
-    # Where to search
-    search_query = '''
+# Retrieve the contact id for the equipment table
+def get_contact_id(fname: str, lname: str) -> str | int:
+    query = '''
     SELECT id FROM contact WHERE Fname = ? AND Lname = ?
     '''
     result = db_manager.execute_query(query, (fname, lname))
@@ -185,11 +161,34 @@ def get_all_data_for_menu() -> list:
         data_list.append({
             "Fname": row[0],
             "Lname": row[1],
-            "Ename": row[2] if row[2] else "No Equipment",  # Handle NULL values
-            "Department": row[3] if row[3] else "N/A",  # Handle NULL values
+            "Ename": row[2] if row[2] else "N/A"
         })
 
     return data_list
+
+def delete_contact_and_equipment(fname: str, lname: str, phone_number: str, email: str) -> bool:
+    delete_query = '''
+    DELETE FROM contact WHERE Fname = ? AND Lname = ? AND PhoneNumber = ? AND Email = ?;
+    '''
+    data = fname, lname, phone_number, email
+
+    db_manager.execute_query(delete_query, data, fetch_all=False)
+    return True
+
+def delete_equipment(ename: str, date_installed: str, decomissioned: str, 
+                     decomissioned_date: str, maintenance_date: str, department: str) -> bool:
+    delete_query = '''
+    DELETE FROM equipment WHERE Ename = ? AND DateInstalled = ? AND Decomissioned = ? AND DecomissionedDate = ? AND MaintenanceDate = ? AND Department = ?;
+    '''
+    data = ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department
+
+    db_manager.execute_query(delete_query, data, fetch_all=False)
+    return True
+
+# Close the database connection when done
+def close_database() -> None:
+    db_manager.close()
+
 
 # Test functionality here
 if __name__ == '__main__':

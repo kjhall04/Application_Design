@@ -11,8 +11,9 @@ class ViewEquipmentData(ctk.CTkFrame):
         self.label = ctk.CTkLabel(self.container, text='Equipment Details', font=('Arial', 20))
         self.label.pack(padx=20, pady=10)
 
-        self.details_label = ctk.CTkLabel(self.container, text='', font=('Arial', 15))
-        self.details_label.pack(padx=20, pady=10)
+        # Create a frame for the details grid
+        self.details_frame = ctk.CTkFrame(self.container)
+        self.details_frame.pack(padx=20, pady=10)
 
         self.delete_button = ctk.CTkButton(self.container, text='Delete Entry', command=lambda: self.delete_entry())
         self.delete_button.pack(pady=(10, 5))
@@ -21,6 +22,7 @@ class ViewEquipmentData(ctk.CTkFrame):
         self.back_button.pack(pady=(5, 10))
 
     def show_data(self, contact_id, ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department):
+        self.contact_id = contact_id
         self.ename = ename
         self.date_installed = date_installed
         self.decomissioned = decomissioned
@@ -28,12 +30,35 @@ class ViewEquipmentData(ctk.CTkFrame):
         self.maintenance_date = maintenance_date
         self.department = department
 
-        details = f'Equipment: {ename}\nDepartment: {department}\nDate Installed: {date_installed}\nMaintenance Date: {maintenance_date}\nDecomissioned: {decomissioned}\nDecomissioned Date: {decomissioned_date}'
-        self.details_label.configure(text=details)
-        return
+        # Clear the grid to avoid overlapping data
+        for widget in self.details_frame.winfo_children():
+            widget.destroy()
+
+        # Create a grid layout for details
+        data_labels = [
+            "Equipment", "Department", "Date Installed", 
+            "Maintenance Date", "Decomissioned", "Decomissioned Date"
+        ]
+        data_values = [
+            ename, department, date_installed, 
+            maintenance_date, decomissioned, decomissioned_date
+        ]
+
+        for i, (label, value) in enumerate(zip(data_labels, data_values)):
+            label_widget = ctk.CTkLabel(self.details_frame, text=f'{label}:', font=('Arial', 15), anchor='e')
+            label_widget.grid(row=i, column=0, sticky='e', padx=10, pady=5)
+
+            value_widget = ctk.CTkLabel(self.details_frame, text=value, font=('Arial', 15), anchor='w')
+            value_widget.grid(row=i, column=1, sticky='w', padx=10, pady=5)
 
     def delete_entry(self):
-        if hasattr(self, 'ename') and hasattr(self, 'date_installed') and hasattr(self, 'decomissioned') and hasattr(self, 'decomissioned_date') and hasattr(self, 'maintenance_date') and hasattr(self, 'department'):
-            DatabaseFunctions.delete_equipment(self.ename, self.date_installed, self.decomissioned, self.decomissioned_date, self.maintenance_date, self.department)
+        if all(
+            hasattr(self, attr) for attr in 
+            ['ename', 'date_installed', 'decomissioned', 'decomissioned_date', 'maintenance_date', 'department']
+        ):
+            DatabaseFunctions.delete_equipment(
+                self.ename, self.date_installed, self.decomissioned,
+                self.decomissioned_date, self.maintenance_date, self.department
+            )
+            self.master.frames['Database'].refresh_data()
             self.master.show_frame('Database')
-        return

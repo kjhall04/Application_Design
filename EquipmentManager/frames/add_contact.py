@@ -62,6 +62,7 @@ class AddContact(ctk.CTkFrame):
         if action != True:
             self.error_label.configure(text=action)
         else:
+            self.master.frames['Database'].refresh_data()
             self.master.show_frame('Database')
             self.clear_entries()
     
