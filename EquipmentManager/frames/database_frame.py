@@ -18,7 +18,7 @@ class DatabaseFrame(ctk.CTkFrame):
         self.database = ctk.CTkScrollableFrame(self.container, width=350)
         self.database.grid(row=1, columnspan=2, padx=20, pady=(0, 20), sticky='nsew')
 
-        self.database.grid_columnconfigure(0, weight=1)
+        self.database.grid_columnconfigure((0, 1), weight=1)
 
         self.add_contact_button = ctk.CTkButton(self.container, text='Add Contact', command=lambda: self.master.show_frame('AddC'))
         self.add_contact_button.grid(row=2, column=0, padx=(15, 5), pady=5, sticky='ew')
@@ -50,7 +50,7 @@ class DatabaseFrame(ctk.CTkFrame):
                 font=('Arial', 15), 
                 anchor='center'
             )
-            name_label.grid(row=self.row_counter, column=0, padx=10, pady=5, sticky='w')
+            name_label.grid(row=self.row_counter, column=0, padx=10, pady=5, sticky='e')
             self.row_counter += 1
 
             name_label._label.configure(cursor='hand2')
@@ -136,7 +136,7 @@ class DatabaseFrame(ctk.CTkFrame):
                 font=('Arial', 15), 
                 anchor='center'
             )
-            name_label.grid(row=self.row_counter, column=0, padx=10, pady=5, sticky='w')
+            name_label.grid(row=self.row_counter, column=0, padx=10, pady=5, sticky='e')
             self.row_counter += 1
 
             name_label._label.configure(cursor='hand2')
