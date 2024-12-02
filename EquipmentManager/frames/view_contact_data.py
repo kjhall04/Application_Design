@@ -18,7 +18,8 @@ class ViewContactData(ctk.CTkFrame):
         self.delete_button = ctk.CTkButton(self.container, text='Delete Entry', command=lambda: self.delete_entry())
         self.delete_button.pack(pady=(10, 5))
 
-        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: self.master.show_frame('Database'))
+        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: (self.master.show_frame('Database'), 
+                                                                                                           self.master.frames['Database'].refresh_data(fetch_fresh=True)))
         self.back_button.pack(pady=(5, 10))
 
     def show_data(self, fname, lname, phone, email):
@@ -42,8 +43,25 @@ class ViewContactData(ctk.CTkFrame):
             value_widget = ctk.CTkLabel(self.details_frame, text=value, font=('Arial', 15), anchor='w')
             value_widget.grid(row=i, column=1, sticky='w', padx=10, pady=5)
 
+            value_widget._label.configure(cursor='hand2')
+
+            value_widget.bind('<Enter>', lambda e, label=value_widget: self.on_hover(e, label))
+            value_widget.bind('<Leave>', lambda e, label=value_widget: self.on_leave(e, label))
+            value_widget.bind('<Button-1>', lambda e, label_text=label, value=value: self.on_value_click(e, label_text, value))
+
     def delete_entry(self):
         if hasattr(self, 'fname') and hasattr(self, 'lname') and hasattr(self, 'phone') and hasattr(self, 'email'):
             DatabaseFunctions.delete_contact_and_equipment(self.fname, self.lname, self.phone, self.email)
             self.master.frames['Database'].refresh_data(fetch_fresh=True)
             self.master.show_frame('Database')
+
+    def on_hover(self, event, label):
+        label.configure(text_color='gray')
+
+    def on_leave(self, event, label):
+        label.configure(text_color='white')
+
+    def on_value_click(self, event, label_text, value):
+        # Show a new frame for editing the value
+        self.master.frames['EditC'].show_data(label_text, value, self.fname, self.lname, self.phone, self.email)
+        self.master.show_frame('EditC')

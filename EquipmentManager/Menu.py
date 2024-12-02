@@ -28,6 +28,8 @@ class FrameManager(ctk.CTk):
         self.add_frame(ViewEquipmentData, 'EData')
         self.add_frame(AddContact, 'AddC')
         self.add_frame(AddEquipment, 'AddE')
+        self.add_frame(EditContactData, 'EditC')
+        self.add_frame(EditEquipmentData, 'EditE')
 
         # Debug mode
         self.debug_mode = debug_mode

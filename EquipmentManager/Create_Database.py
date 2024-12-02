@@ -21,11 +21,11 @@ def create_database():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         contact_id INTEGER NOT NULL,
         Ename TEXT NOT NULL,
+        Department TEXT NOT NULL,
         DateInstalled TEXT NOT NULL,
+        MaintenanceDate TEXT NOT NULL,
         Decomissioned TEXT NOT NULL,
         DecomissionedDate TEXT NOT NULL,
-        MaintenanceDate TEXT NOT NULL,
-        Department TEXT NOT NULL,
         FOREIGN KEY (contact_id) REFERENCES contact(id) ON DELETE CASCADE
     );
 

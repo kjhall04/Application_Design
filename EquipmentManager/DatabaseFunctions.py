@@ -41,8 +41,8 @@ def get_contact_data() -> list:
 # Retrieve equipment data
 def get_equipment_data() -> list:
     query = '''
-    SELECT contact_id, Ename, DateInstalled, Decomissioned, DecomissionedDate,
-           MaintenanceDate, Department
+    SELECT contact_id, Ename, Department, DateInstalled, MaintenanceDate, 
+           Decomissioned, DecomissionedDate
     FROM equipment
     '''
     return db_manager.execute_query(query)
@@ -79,18 +79,18 @@ def add_contact(fname: str, lname: str, phone_number: str, email: str) -> str | 
 
 
 # Add equipment data to the database
-def add_equipment(fname: str, lname: str, ename: str, date_installed: str, decomissioned: str, 
-                  decomissioned_date: str, maintenance_date: str, department: str) -> str | bool:
+def add_equipment(fname: str, lname: str, ename: str, department: str, date_installed: str, 
+                   maintenance_date: str, decomissioned: str, decomissioned_date: str) -> str | bool:
     contact_id = get_contact_id(fname, lname)
     if isinstance(contact_id, str):
         return contact_id  # Return error message if no contact is found
 
     query = '''
-    INSERT INTO equipment (contact_id, Ename, DateInstalled, Decomissioned, DecomissionedDate, 
-                           MaintenanceDate, Department)
+    INSERT INTO equipment (contact_id, Ename, Department, DateInstalled, MaintenanceDate, 
+                           Decomissioned, DecomissionedDate)
     VALUES (?, ?, ?, ?, ?, ?, ?);
     '''
-    data = contact_id, ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department
+    data = contact_id, ename, department, date_installed, maintenance_date, decomissioned, decomissioned_date
 
     if validate_database_entry('equipment', data):
         return 'This data is already in the database.'
@@ -124,12 +124,12 @@ def validate_database_entry(table_name: str, data: list) -> bool:
         '''
     elif table_name == 'equipment':
         query = '''
-        SELECT contact_id, Ename, DateInstalled, Decomissioned, DecomissionedDate, 
-               MaintenanceDate, Department 
+        SELECT contact_id, Ename, Department, MaintenanceDate, DateInstalled,
+               Decomissioned, DecomissionedDate
         FROM equipment 
-        WHERE contact_id = ? AND Ename = ? AND DateInstalled = ? 
+        WHERE contact_id = ? AND Ename = ? AND Department = ? 
+              AND DateInstalled = ? AND MaintenanceDate = ?
               AND Decomissioned = ? AND DecomissionedDate = ? 
-              AND MaintenanceDate = ? AND Department = ?
         '''
     else:
         return False
@@ -178,12 +178,43 @@ def delete_contact_and_equipment(fname: str, lname: str, phone_number: str, emai
 def delete_equipment(ename: str, date_installed: str, decomissioned: str, 
                      decomissioned_date: str, maintenance_date: str, department: str) -> bool:
     delete_query = '''
-    DELETE FROM equipment WHERE Ename = ? AND DateInstalled = ? AND Decomissioned = ? AND DecomissionedDate = ? AND MaintenanceDate = ? AND Department = ?;
+    DELETE FROM equipment WHERE Ename = ? AND Department = ? AND DateInstalled = ? AND MaintenanceDate = ? AND Decomissioned = ? AND DecomissionedDate = ?;
     '''
     data = ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department
 
     db_manager.execute_query(delete_query, data, fetch_all=False)
     return True
+
+def update_single_data(table_name: str, column_to_update: str, new_value: str, conditions: dict) -> bool:
+    """
+    Update a specific value in the database.
+    
+    :param table_name: The name of the table to update.
+    :param column_to_update: The column to be updated.
+    :param new_value: The new value to set.
+    :param conditions: A dictionary of conditions to identify the row (column: value).
+    :return: True if the operation succeeds, False otherwise.
+    """
+    if not table_name or not column_to_update or not conditions:
+        return False
+
+    if not isinstance(conditions, dict) or len(conditions) == 0:
+        return False
+
+    # Build the WHERE clause dynamically from conditions
+    where_clause = " AND ".join([f"{col} = ?" for col in conditions.keys()])
+    where_values = list(conditions.values())
+
+    # Build the SQL query
+    query = f"UPDATE {table_name} SET {column_to_update} = ? WHERE {where_clause};"
+    params = [new_value] + where_values
+
+    # Execute the query
+    result = db_manager.execute_query(query, params, fetch_all=False)
+    if result is None:
+        return True
+    else:
+        return False
 
 # Close the database connection when done
 def close_database() -> None:

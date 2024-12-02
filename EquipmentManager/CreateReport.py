@@ -25,7 +25,6 @@ class PDF(FPDF):
         self.ln()
 
     def check_space(self, content_height):
-        """Checks if there's enough space for content, and adds a new page if needed."""
         if self.get_y() + content_height > self.h - 15:  # 15 for bottom margin
             self.add_page()
 
@@ -85,7 +84,7 @@ def generate_pdf():
     conn.close()
 
     # Output PDF
-    output_file = "Contact_Equipment_Report.pdf"
+    output_file = "EquipmentManager\\Contact_Equipment_Report.pdf"
     pdf.output(output_file)
 
     # Open the PDF

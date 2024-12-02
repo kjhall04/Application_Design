@@ -18,18 +18,19 @@ class ViewEquipmentData(ctk.CTkFrame):
         self.delete_button = ctk.CTkButton(self.container, text='Delete Entry', command=lambda: self.delete_entry())
         self.delete_button.pack(pady=(10, 5))
 
-        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: self.master.show_frame('Database'))
+        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: (self.master.show_frame('Database'), 
+                                                                                                           self.master.frames['Database'].refresh_data(fetch_fresh=True)))
         self.back_button.pack(pady=(5, 10))
 
-    def show_data(self, contact_id, ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department):
+    def show_data(self, contact_id, ename, department, date_installed, maintenance_date, decomissioned, decomissioned_date):
         self.contact_id = contact_id
         self.ename = ename
+        self.department = department
         self.date_installed = date_installed
+        self.maintenance_date = maintenance_date
         self.decomissioned = decomissioned
         self.decomissioned_date = decomissioned_date
-        self.maintenance_date = maintenance_date
-        self.department = department
-
+        
         # Clear the grid to avoid overlapping data
         for widget in self.details_frame.winfo_children():
             widget.destroy()
@@ -51,6 +52,12 @@ class ViewEquipmentData(ctk.CTkFrame):
             value_widget = ctk.CTkLabel(self.details_frame, text=value, font=('Arial', 15), anchor='w')
             value_widget.grid(row=i, column=1, sticky='w', padx=10, pady=5)
 
+            value_widget._label.configure(cursor='hand2')
+
+            value_widget.bind('<Enter>', lambda e, label=value_widget: self.on_hover(e, label))
+            value_widget.bind('<Leave>', lambda e, label=value_widget: self.on_leave(e, label))
+            value_widget.bind('<Button-1>', lambda e, label_text=label, value=value: self.on_value_click(e, label_text, value))
+
     def delete_entry(self):
         if all(
             hasattr(self, attr) for attr in 
@@ -62,3 +69,14 @@ class ViewEquipmentData(ctk.CTkFrame):
             )
             self.master.frames['Database'].refresh_data(fetch_fresh=True)
             self.master.show_frame('Database')
+
+    def on_hover(self, event, label):
+        label.configure(text_color='gray')
+
+    def on_leave(self, event, label):
+        label.configure(text_color='white')
+
+    def on_value_click(self, event, label_text, value):
+        self.master.frames['EditE'].show_data(label_text, value, self.contact_id, self.ename, self.date_installed, self.decomissioned,
+                                              self.decomissioned_date, self.maintenance_date, self.department)
+        self.master.show_frame('EditE')

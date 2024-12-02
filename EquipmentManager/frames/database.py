@@ -64,10 +64,10 @@ class DatabaseFrame(ctk.CTkFrame):
 
     def on_eq_click(self, event, equipment):
         equipment_data = DatabaseFunctions.get_equipment_data()
-        for contact_id, ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department in equipment_data:
+        for contact_id, ename, department, date_installed, maintenance_date, decomissioned, decomissioned_date in equipment_data:
             if ename == equipment['Ename']:  # Compare the equipment name directly
                 self.master.frames['EData'].show_data(
-                    contact_id, ename, date_installed, decomissioned, decomissioned_date, maintenance_date, department
+                    contact_id, ename, department, date_installed, maintenance_date, decomissioned, decomissioned_date
                 )
                 self.master.show_frame('EData')
                 break
