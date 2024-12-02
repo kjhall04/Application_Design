@@ -42,7 +42,7 @@ class SignUpFrame(ctk.CTkFrame):
 
         # Button to go back to the login page
         # Run the show frame command for the login page
-        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: (self.master.show_frame('Login'), self.clear_entries()))
+        self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: (self.master.show_frame('Login'), self.master.frames['Login'].clear_entries(), self.clear_entries()))
         self.back_button.pack(pady=(5, 15))
 
     # Function to validate the info
@@ -81,6 +81,7 @@ class SignUpFrame(ctk.CTkFrame):
         if action != True:
             self.error_label.configure(text=action)
         else:
+            self.master.frames['Login'].clear_entries()
             self.master.show_frame('Login')
             self.clear_entries()
     

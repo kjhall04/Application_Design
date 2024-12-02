@@ -60,5 +60,5 @@ class ViewEquipmentData(ctk.CTkFrame):
                 self.ename, self.date_installed, self.decomissioned,
                 self.decomissioned_date, self.maintenance_date, self.department
             )
-            self.master.frames['Database'].refresh_data()
+            self.master.frames['Database'].refresh_data(fetch_fresh=True)
             self.master.show_frame('Database')

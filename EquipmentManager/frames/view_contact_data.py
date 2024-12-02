@@ -45,5 +45,5 @@ class ViewContactData(ctk.CTkFrame):
     def delete_entry(self):
         if hasattr(self, 'fname') and hasattr(self, 'lname') and hasattr(self, 'phone') and hasattr(self, 'email'):
             DatabaseFunctions.delete_contact_and_equipment(self.fname, self.lname, self.phone, self.email)
-            self.master.frames['Database'].refresh_data()
+            self.master.frames['Database'].refresh_data(fetch_fresh=True)
             self.master.show_frame('Database')

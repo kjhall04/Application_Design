@@ -52,3 +52,12 @@ class LoginFrame(ctk.CTkFrame):
 
         # If no match is found, display an error message
         self.error_label.configure(text='Invalid username or password', text_color='red')
+
+    def clear_entries(self):
+        self.username_entry.delete(0, 'end')
+        self.password_entry.delete(0, 'end')
+
+        self.username_entry.configure(placeholder_text='Username')
+        self.password_entry.configure(placeholder_text='Password', show='*')
+
+        self.error_label.configure(text='')

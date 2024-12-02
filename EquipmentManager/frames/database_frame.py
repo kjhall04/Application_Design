@@ -1,10 +1,12 @@
 import customtkinter as ctk
 import DatabaseFunctions
+import CreateReport
 
 class DatabaseFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         self.data_cache = {}
+        self.all_data = DatabaseFunctions.get_all_data_for_menu()
 
         self.container = ctk.CTkFrame(self)
         self.container.pack(expand=True, padx=20, pady=20)
@@ -15,66 +17,34 @@ class DatabaseFrame(ctk.CTkFrame):
         self.label = ctk.CTkLabel(self.container, text='Database', font=('Arial', 25))
         self.label.grid(row=0, columnspan=2, padx=10, pady=(20, 10), sticky='n')
 
+        self.search_var = ctk.StringVar()
+        self.search_bar = ctk.CTkEntry(self.container, textvariable=self.search_var,)
+        self.search_bar.grid(row=1, columnspan=2, padx=20, pady=(0, 10), sticky='ew')
+        self.search_bar.bind('<KeyRelease>', self.filter_data)
+
         self.database = ctk.CTkScrollableFrame(self.container, width=350)
-        self.database.grid(row=1, columnspan=2, padx=20, pady=(0, 20), sticky='nsew')
+        self.database.grid(row=2, columnspan=2, padx=20, pady=(0, 20), sticky='nsew')
 
         self.database.grid_columnconfigure((0, 1), weight=1)
 
         self.add_contact_button = ctk.CTkButton(self.container, text='Add Contact', command=lambda: self.master.show_frame('AddC'))
-        self.add_contact_button.grid(row=2, column=0, padx=(15, 5), pady=5, sticky='ew')
+        self.add_contact_button.grid(row=3, column=0, padx=(15, 5), pady=5, sticky='ew')
 
         self.add_equipment_button = ctk.CTkButton(self.container, text='Add Equipment', command=lambda: self.master.show_frame('AddE'))
-        self.add_equipment_button.grid(row=2, column=1, padx=(5, 15), pady=5, sticky='ew')
+        self.add_equipment_button.grid(row=3, column=1, padx=(5, 15), pady=5, sticky='ew')
 
-        self.create_report_button = ctk.CTkButton(self.container, text='Create Report')
-        self.create_report_button.grid(row=3, columnspan=2, padx=15, pady=5)
+        self.create_report_button = ctk.CTkButton(self.container, text='Create Report', command=self.create_report)
+        self.create_report_button.grid(row=4, columnspan=2, padx=15, pady=(5, 0))
+
+        self.error_label = ctk.CTkLabel(self.container, text='', text_color='red')
+        self.error_label.grid(row=5, columnspan=2, padx=15, pady=2)
 
         self.exit_button = ctk.CTkButton(self.container, text='Exit Program', fg_color='#243573', command=self.master.quit)
-        self.exit_button.grid(row=4, columnspan=2, padx=15, pady=(5, 10))
+        self.exit_button.grid(row=6, columnspan=2, padx=15, pady=(0, 10))
 
         self.row_counter = 0
 
-        data_list = DatabaseFunctions.get_all_data_for_menu()
-
-        grouped_data = {}
-        for entry in data_list:
-            full_name = f"{entry['Fname']} {entry['Lname']}"
-            if full_name not in grouped_data:
-                grouped_data[full_name] = []
-            grouped_data[full_name].append({'Ename': entry['Ename']})
-
-        for name, equipment_list in grouped_data.items():
-            name_label = ctk.CTkLabel(
-                self.database, 
-                text=name, 
-                font=('Arial', 15), 
-                anchor='center'
-            )
-            name_label.grid(row=self.row_counter, column=0, padx=10, pady=5, sticky='e')
-            self.row_counter += 1
-
-            name_label._label.configure(cursor='hand2')
-
-            name_label.bind('<Enter>', lambda e, label=name_label: self.on_hover(e, label))
-            name_label.bind('<Leave>', lambda e, label=name_label: self.on_leave(e, label))  # When cursor leaves
-            name_label.bind('<Button-1>', lambda e, name=name: self.on_name_click(e, name))
-
-            for equipment in equipment_list:
-                equipment_label = ctk.CTkLabel(
-                    self.database,
-                    text=f"{equipment['Ename']}",
-                    font=('Arial', 14),
-                    anchor='w'
-                )
-                equipment_label.grid(row=self.row_counter - 1, column=1, padx=10, pady=5, sticky='w')
-                self.row_counter += 1
-
-                equipment_label._label.configure(cursor='hand2')
-
-                equipment_label.bind('<Enter>', lambda e, label=equipment_label: self.on_hover(e, label))
-                equipment_label.bind('<Leave>', lambda e, label=equipment_label: self.on_leave(e, label))  # When cursor leaves
-                equipment_label.bind('<Button-1>', lambda e, eq=equipment: self.on_eq_click(e, eq))
-
+        self.refresh_data()
 
     def on_hover(self, event, label):
         label.configure(text_color='gray')
@@ -102,27 +72,31 @@ class DatabaseFrame(ctk.CTkFrame):
                 self.master.show_frame('EData')
                 break
 
-    def refresh_data(self):
-        # Fetch updated data from the database
-        new_data = self.get_grouped_data()
+    def create_report(self):
+        action = CreateReport.generate_pdf()
+        if action != None:
+            self.error_label.configure(text=action)
 
-        # Compare with cached data
-        if new_data == self.data_cache:
-            return  # No changes, so no need to refresh
+    def filter_data(self, event=None):
+        search_term = self.search_var.get().lower()
+        filtered_data = [
+            entry for entry in self.all_data
+            if search_term in f"{entry['Fname']} {entry['Lname']}".lower() 
+        ]
+        self.refresh_data(filtered_data)
 
-        # Update the cache and rebuild the UI
-        self.data_cache = new_data
+    def refresh_data(self, data_list=None, fetch_fresh=False):
+        if fetch_fresh or data_list is None:
+            self.all_data = DatabaseFunctions.get_all_data_for_menu()
+            data_list = self.all_data
 
         # Clear existing UI components in the scrollable frame
         for widget in self.database.winfo_children():
             widget.destroy()
 
         self.row_counter = 0
-
-        # Fetch updated data
-        data_list = DatabaseFunctions.get_all_data_for_menu()
-
         grouped_data = {}
+
         for entry in data_list:
             full_name = f"{entry['Fname']} {entry['Lname']}"
             if full_name not in grouped_data:
@@ -142,7 +116,7 @@ class DatabaseFrame(ctk.CTkFrame):
             name_label._label.configure(cursor='hand2')
 
             name_label.bind('<Enter>', lambda e, label=name_label: self.on_hover(e, label))
-            name_label.bind('<Leave>', lambda e, label=name_label: self.on_leave(e, label))  # When cursor leaves
+            name_label.bind('<Leave>', lambda e, label=name_label: self.on_leave(e, label))
             name_label.bind('<Button-1>', lambda e, name=name: self.on_name_click(e, name))
 
             for equipment in equipment_list:
@@ -158,17 +132,5 @@ class DatabaseFrame(ctk.CTkFrame):
                 equipment_label._label.configure(cursor='hand2')
 
                 equipment_label.bind('<Enter>', lambda e, label=equipment_label: self.on_hover(e, label))
-                equipment_label.bind('<Leave>', lambda e, label=equipment_label: self.on_leave(e, label))  # When cursor leaves
+                equipment_label.bind('<Leave>', lambda e, label=equipment_label: self.on_leave(e, label))
                 equipment_label.bind('<Button-1>', lambda e, eq=equipment: self.on_eq_click(e, eq))
-
-    def get_grouped_data(self):
-        data_list = DatabaseFunctions.get_all_data_for_menu()
-
-        grouped_data = {}
-        for entry in data_list:
-            full_name = f"{entry['Fname']} {entry['Lname']}"
-            if full_name not in grouped_data:
-                grouped_data[full_name] = []
-            grouped_data[full_name].append({'Ename': entry['Ename']})
-
-        return grouped_data
