@@ -1,13 +1,13 @@
 import sqlite3
 
 def create_database():
-    # connect to sqlite database if on doesn't exist
+    # Connect to sqlite database if on doesn't exist
     conn = sqlite3.connect('EquipmentManager\\EquipmentLogs.db')
 
-    # create cursor object
+    # Create cursor object
     cursor = conn.cursor()
 
-    # create query for Contacts, Equipment, and Login Info
+    # Create query for Contacts, Equipment, and Login Info
     create_tables_query = '''
     CREATE TABLE IF NOT EXISTS contact (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,5 +47,6 @@ def create_database():
     # Exit database
     conn.close()
 
+# Test if needed
 if __name__ == '__main__':
     create_database()

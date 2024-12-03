@@ -9,6 +9,8 @@ from .add_equipment import AddEquipment
 from .edit_contact_data import EditContactData
 from .edit_equipment_data import EditEquipmentData
 
+# Puts all the frames together so that they can all be imported at once
+
 __all__ = [
     'LoginFrame',
     'SignUpFrame',

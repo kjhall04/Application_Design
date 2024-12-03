@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import DatabaseFunctions
 
-# Clar ss for  the login Frame
+# Class for the login Frame
 class LoginFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -53,6 +53,7 @@ class LoginFrame(ctk.CTkFrame):
         # If no match is found, display an error message
         self.error_label.configure(text='Invalid username or password', text_color='red')
 
+    # Clear all the entries and errors when return to the page
     def clear_entries(self):
         self.username_entry.delete(0, 'end')
         self.password_entry.delete(0, 'end')

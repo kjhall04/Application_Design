@@ -41,7 +41,7 @@ class SignUpFrame(ctk.CTkFrame):
         self.error_label.pack(padx=10)
 
         # Button to go back to the login page
-        # Run the show frame command for the login page
+        # Run the show frame command for the cleared login page
         self.back_button = ctk.CTkButton(self.container, text='Back', fg_color='#243573', command=lambda: (self.master.show_frame('Login'), self.master.frames['Login'].clear_entries(), self.clear_entries()))
         self.back_button.pack(pady=(5, 15))
 
@@ -78,21 +78,22 @@ class SignUpFrame(ctk.CTkFrame):
 
         action = DatabaseFunctions.add_login(fname, lname, username, password)
 
+        # Show error if unsucessful
         if action != True:
             self.error_label.configure(text=action)
         else:
+            # Go back to the login from if succesful
             self.master.frames['Login'].clear_entries()
             self.master.show_frame('Login')
             self.clear_entries()
     
+    # Clear data and errors
     def clear_entries(self):
-        # Clear the entries
         self.fname_entry.delete(0, 'end')
         self.lname_entry.delete(0, 'end')
         self.username_entry.delete(0, 'end')
         self.password_entry.delete(0, 'end')
 
-        # Reset placeholder text manually
         self.fname_entry.configure(placeholder_text='First Name')
         self.lname_entry.configure(placeholder_text='Last Name')
         self.username_entry.configure(placeholder_text='Username')
