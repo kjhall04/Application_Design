@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 # Class to manage database functions
 class DatabaseManager:
@@ -23,8 +24,8 @@ class DatabaseManager:
 
 
 # Initialize a single database instance
-db_manager = DatabaseManager('EquipmentManager\\EquipmentLogs.db')
-
+db_path = os.path.join('EquipmentManager', 'EquipmentLogs.db')
+db_manager = DatabaseManager(db_path)
 
 # Retrieve all login data
 def get_login_data() -> list:
@@ -258,8 +259,8 @@ def close_database() -> None:
 # Test functionality here
 if __name__ == '__main__':
 
-    # print(add_contact('Henry', 'Jones', '601-895-2344', 'hjones@gmail.com'))
-    # print(add_equipment('Henry', 'Jones', 'Router', '10/04/2024', 'False', 'N/A', '01/01/2025', 'I.T.'))
+    # print(add_contact('John', 'Estes', '678-822-4111', 'jestes@gmail.com'))
+    # print(add_equipment('John', 'Estes', 'Laptop', '10/04/2024', 'False', 'N/A', '01/01/2025', 'IT'))
 
     # print(get_login_data())
     # print(get_contact_data())
