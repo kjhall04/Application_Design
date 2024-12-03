@@ -51,13 +51,16 @@ Below are images of all the User Interface screens. (Note: Any data shown is fak
 <div style="display: flex;">
   <img src="https://github.com/kjhall04/Application_Design/blob/main/EquipmentManager/Images/LoginScreen.png" width="300" />
   <img src="https://github.com/kjhall04/Application_Design/blob/main/EquipmentManager/Images/SignUpScreen.png" width="300" />
+</div>
+
+<div style="display: flex;">
   <img src="https://github.com/kjhall04/Application_Design/blob/main/EquipmentManager/Images/LoadingScreen.png" width="300" />
+  <img src="https://github.com/kjhall04/Application_Design/blob/main/EquipmentManager/Images/DatabaseScreen.png" width="300" />
 </div>
 
 <div style="display: flex;">
   <img src="https://github.com/kjhall04/Application_Design/blob/main/EquipmentManager/Images/ContactDataScreen.png" width="300" />
   <img src="https://github.com/kjhall04/Application_Design/blob/main/EquipmentManager/Images/EquipmentDataScreen.png" width="300" />
-	<img src="https://github.com/kjhall04/Application_Design/blob/main/EquipmentManager/Images/DatabaseScreen.png" width="300" />
 </div>
 
 <div style="display: flex;">
