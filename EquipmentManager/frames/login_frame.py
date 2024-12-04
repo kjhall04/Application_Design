@@ -23,7 +23,7 @@ class LoginFrame(ctk.CTkFrame):
         self.password_entry.pack(pady=5)
 
         # Button for logging in
-        self.login_button = ctk.CTkButton(self.container, text='Login', fg_color='#243573', command=self.validate_entry)
+        self.login_button = ctk.CTkButton(self.container, text='Login', command=self.validate_entry)
         self.login_button.pack(pady=5)
 
         # Error label to show errors
@@ -32,7 +32,7 @@ class LoginFrame(ctk.CTkFrame):
 
         # Button for going to the sign up page
         # Run the show frame command to switch to sign up
-        self.sign_up_button = ctk.CTkButton(self.container, text='Sign Up', command=lambda: self.master.show_frame('Sign Up'))
+        self.sign_up_button = ctk.CTkButton(self.container, text='Sign Up',  fg_color='#243573', command=lambda: self.master.show_frame('Sign Up'))
         self.sign_up_button.pack(pady=(5, 15))
 
     # function for validating user entries to login
